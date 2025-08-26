@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Pendaftaran;
 use App\Models\ProgramStudi;
 use Illuminate\Http\Request;
-// Ganti ini untuk konsistensi dengan controller lain dari Breeze
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

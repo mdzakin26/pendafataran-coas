@@ -53,10 +53,7 @@
                                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Nama Lengkap</dt>
                                             <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $pendaftaran->user->name }}</dd>
                                         </div>
-                                        <div class="sm:col-span-1">
-                                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">NIK</dt>
-                                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $pendaftaran->user->nik }}</dd>
-                                        </div>
+                                        
                                         <div class="sm:col-span-1">
                                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Email</dt>
                                             <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $pendaftaran->user->email }}</dd>
