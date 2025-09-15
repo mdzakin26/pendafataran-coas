@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('program_studi_id')->constrained();
+            $table->foreignId('matakuliah_id')->constrained('matakuliahs')->onDelete('cascade');
             $table->string('alamat');
             $table->string('no_telepon');
-            // Status : 'pending', 'diverifikasi', 'ditolak'
             $table->string('status')->default('pending');
             $table->text('catatan_admin')->nullable();
             $table->timestamps();

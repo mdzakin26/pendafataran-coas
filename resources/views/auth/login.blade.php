@@ -2,67 +2,97 @@
     <x-slot name="title">
         Login
     </x-slot>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+    <!-- Card Container -->
+    <div class="max-w-md mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 mt-10">
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Selamat Datang </h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Masuk untuk melanjutkan</p>
         </div>
 
-        <div class="mt-4" x-data="{ show: false }">
-            <x-input-label for="password" :value="__('Password')" />
+        <!-- Session Status -->
+        <x-auth-session-status class="mb-4" :status="session('status')" />
 
-            <div class="relative">
-                {{-- KITA GANTI <x-text-input> DENGAN <input> BIASA --}}
-                <input id="password" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" :type="show ? 'text' : 'password'" name="password" required autocomplete="current-password" />
+        <form method="POST" action="{{ route('login') }}" class="space-y-5">
+            @csrf
 
-                {{-- Tombol Ikon Mata (tetap sama) --}}
-                <div @click="show = !show" class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
-                    <svg x-show="!show" class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
-                        <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 010-1.18l1.105-1.99a.5.5 0 01.866.5L1.321 9.4a1.651 1.651 0 010 1.18l1.32 2.376a.5.5 0 01-.866.5L.664 11.77a1.651 1.651 0 010-1.18zM19.336 9.41a1.651 1.651 0 010 1.18l-1.105 1.99a.5.5 0 01-.866-.5l1.321-2.377a1.651 1.651 0 010-1.18l-1.32-2.376a.5.5 0 01.866-.5l1.105 1.99a1.651 1.651 0 010 1.18z" clip-rule="evenodd" />
-                    </svg>
-                    <svg x-show="show" class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="display: none;">
-                        <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.5 2.5 0 013.464 3.464l1.515 1.514a4.501 4.501 0 00-6.494-6.494zM10 15a4.5 4.5 0 01-4.5-4.5c0-1.35.6-2.55 1.515-3.464l6.95 6.95A4.5 4.5 0 0110 15z" clip-rule="evenodd" />
-                    </svg>
-                </div>
+            <!-- Email Address -->
+            <div>
+                <x-input-label for="email" :value="__('Email')" />
+                <x-text-input id="email" 
+                    class="block mt-1 w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 text-gray-700 dark:bg-gray-800 dark:text-gray-200" 
+                    type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+            <!-- Password -->
+            <div x-data="{ show: false }">
+                <x-input-label for="password" :value="__('Password')" />
+                <div class="relative mt-1">
+                    <input id="password" 
+                        class="block w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 text-gray-700 dark:bg-gray-800 dark:text-gray-200 pr-10" 
+                        :type="show ? 'text' : 'password'" name="password" required autocomplete="current-password" />
+                    
+                    <!-- Eye Toggle -->
+                    <button type="button" @click="show = !show" 
+                        class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.478 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <svg x-show="show" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor" style="display:none;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 012.51-4.375M6.343 6.343A9.97 9.97 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.96 9.96 0 01-4.136 5.274M6.343 6.343l11.314 11.314" />
+                        </svg>
+                    </button>
+                </div>
+                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                {{ __('Forgot your password?') }}
-            </a>
-            @endif
+            <!-- Remember Me + Forgot Password -->
+            <div class="flex items-center justify-between">
+                <label for="remember_me" class="inline-flex items-center text-sm text-gray-600 dark:text-gray-400">
+                    <input id="remember_me" type="checkbox" 
+                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600">
+                    <span class="ml-2">Ingat saya</span>
+                </label>
+                
+                @if (Route::has('password.request'))
+                    <a class="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 underline" 
+                       href="{{ route('password.request') }}">
+                        Lupa kata sandi?
+                    </a>
+                @endif
+            </div>
 
-            <x-primary-button class="ms-3">
+            <!-- Submit -->
+            <x-primary-button class="w-full py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition ease-in-out duration-200">
                 {{ __('Log in') }}
             </x-primary-button>
-        </div>
-    </form>
+        </form>
 
-    <div class="text-center mt-6">
-        <p class="text-sm text-gray-600 dark:text-gray-400">
-            Mengalami kendala saat login atau mendaftar?
-            <a href="mailto:admin@pendaftaran.com" class="underline text-indigo-600 dark:text-indigo-400 hover:text-indigo-800">
-                Hubungi Admin
+        <!-- Register Section -->
+        @if (Route::has('register'))
+        <div class="text-center mt-6">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                Belum punya akun?
+            </p>
+            <a href="{{ route('register') }}" 
+               class="mt-2 inline-block w-full text-center py-2 rounded-xl border border-indigo-600 text-indigo-600 hover:bg-indigo-50 dark:border-indigo-400 dark:text-indigo-400 dark:hover:bg-gray-800 transition ease-in-out duration-200">
+                Daftar Sekarang
             </a>
-        </p>
+        </div>
+        @endif
+
+        <!-- Contact -->
+        <div class="text-center mt-6">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                Kendala saat login? 
+                <a href="mailto:admin@pendaftaran.com" 
+                   class="underline text-indigo-600 dark:text-indigo-400 hover:text-indigo-800">
+                    Hubungi Admin
+                </a>
+            </p>
+        </div>
     </div>
 </x-guest-layout>

@@ -20,6 +20,9 @@
                     <x-nav-link :href="route('admin.program-studi.index')" :active="request()->routeIs('admin.program-studi.*')">
                         {{ __('Program Studi') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('admin.matakuliah.index')" :active="request()->routeIs('admin.matakuliah.*')">
+                        {{ __('Mata Kuliah') }}
+                    </x-nav-link>
                     @else
                     {{-- Menu ini hanya akan tampil jika user adalah MAHASISWA --}}
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">

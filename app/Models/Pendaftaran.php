@@ -14,7 +14,7 @@ class Pendaftaran extends Model
 
 
     protected $fillable = [
-        'user_id', 'alamat', 'status', 'catatan_admin','program_studi_id','no_telepon'
+        'user_id', 'alamat', 'status', 'catatan_admin','program_studi_id','no_telepon','matakuliah_id'
     ];
 
     public function user(): BelongsTo
@@ -28,5 +28,13 @@ class Pendaftaran extends Model
     public function dokumens(): HasMany
     {
         return $this->hasMany(Dokumen::class);
+    }
+    public function matakuliah(): BelongsTo
+    {
+        return $this->belongsTo(Matakuliah::class);
+    }
+    public function jadwal(): BelongsTo
+    {
+        return $this->belongsTo(Jadwal::class);
     }
 }

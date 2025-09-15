@@ -11,7 +11,7 @@
 
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-        @include('layouts.navigation')
+        @include('layouts.sidebar')
 
         <header class="bg-white dark:bg-gray-800 shadow">
             <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -67,9 +67,15 @@
                                             <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $pendaftaran->user->tanggal_lahir ? \Carbon\Carbon::parse($pendaftaran->user->tanggal_lahir)->format('d F Y') : '-' }}</dd>
                                         </div>
                                         <div class="sm:col-span-1">
-                                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Program Studi Pilihan</dt>
+                                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Asal Program Studi </dt>
                                             <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $pendaftaran->programStudi->nama_prodi }}</dd>
                                         </div>
+                                        <div class="sm:col-span-1">
+                                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Mata Kuliah Pilihan</dt>
+                                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $pendaftaran->matakuliah->nama }}</dd>
+
+                                        </div>
+                                        
                                         <div class="sm:col-span-2">
                                             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Alamat</dt>
                                             <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $pendaftaran->alamat }}</dd>

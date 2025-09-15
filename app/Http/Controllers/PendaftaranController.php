@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Pendaftaran;
 use App\Models\ProgramStudi;
+use App\Models\Matakuliah;
+use App\Models\Jadwal; // ✅ tambahkan ini
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -18,51 +19,47 @@ class PendaftaranController extends Controller
         if (Auth::user()->pendaftaran) {
             return redirect()->route('dashboard')->with('error', 'Anda Sudah Mendaftar!');
         }
-        $programStudis = ProgramStudi::all();
-        return view('pendaftaran.create',compact('programStudis'));
-    }
 
+        $programStudis = ProgramStudi::all();
+        $matakuliahs   = Matakuliah::all();
+        $jadwals       = Jadwal::all(); // ✅ ambil jadwal + relasi matakuliah
+
+        return view('pendaftaran.create', compact('programStudis', 'matakuliahs', 'jadwals'));
+    }
 
     // Menyimpan data pendaftaran
     public function store(Request $request)
     {
-        // Hapus 'no_telepon' dari validasi
         $request->validate([
             'program_studi_id' => 'required|exists:program_studis,id',
-            'alamat' => 'required|string|max:255',
-            'dokumen_cv' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            // 'dokumen_ijazah' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'matakuliah_id'    => 'required|exists:matakuliahs,id',
+            'jadwal_id'        => 'required|exists:jadwals,id', // ✅ validasi jadwal
+            'alamat'           => 'required|string|max:255',
+            'dokumen_cv'       => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
-
+        
         try {
             DB::beginTransaction();
 
-            // Hapus 'no_telepon' dari data yang disimpan
+            // Simpan data pendaftaran
             $pendaftaran = Pendaftaran::create([
-                'user_id' => Auth::id(),
-                'program_studi_id' => $request->program_studi_id,
-                'alamat' => $request->alamat,
-                'status' => 'pending',
-                'catatan_admin' => null,
+                'user_id'         => Auth::id(),
+                'program_studi_id'=> $request->program_studi_id,
+                'matakuliah_id'   => $request->matakuliah_id,
+                'jadwal_id'       => $request->jadwal_id, // ✅ simpan jadwal yg dipilih
+                'alamat'          => $request->alamat,
+                'status'          => 'pending',
+                'catatan_admin'   => null,
             ]);
 
-            // 2. Simpan Data Dokumen CV
+            // Simpan Dokumen CV
             if ($request->hasFile('dokumen_cv')) {
                 $path_cv = $request->file('dokumen_cv')->store('public/dokumen');
                 $pendaftaran->dokumens()->create([
                     'tipe_dokumen' => 'CV',
-                    'path_file' => $path_cv
+                    'path_file'    => $path_cv
                 ]);
             }
-
-            // // 3. Simpan Dokumen Ijazah
-            // if ($request->hasFile('dokumen_ijazah')) {
-            //     $path_ijazah = $request->file('dokumen_ijazah')->store('public/dokumen');
-            //     $pendaftaran->dokumens()->create([
-            //         'tipe_dokumen' => 'Ijazah',
-            //         'path_file' => $path_ijazah
-            //     ]);
-            // }
 
             DB::commit();
 
@@ -70,7 +67,6 @@ class PendaftaranController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Terjadi Kesalahan. Silakan Coba Lagi. Detail: ' . $e->getMessage());
-            
         }
     }
 }
