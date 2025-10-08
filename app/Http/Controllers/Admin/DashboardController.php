@@ -4,37 +4,41 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pendaftaran;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        // Statistik umum
+        $totalPendaftar = Pendaftaran::count();
+        $pendaftarPending = Pendaftaran::where('status', 'pending')->count();
+        $pendaftarDiverifikasi = Pendaftaran::where('status', 'diverifikasi')->count();
+        $pendaftarDitolak = Pendaftaran::where('status', 'ditolak')->count();
 
-        // Ambil data statistik
-        $totalPendaftar = \App\Models\Pendaftaran::count();
-        $pendaftarPending = \App\Models\Pendaftaran::where('status', 'pending')->count();
-        $pendaftarDiverifikasi = \App\Models\Pendaftaran::where('status', 'diverifikasi')->count();
-        $pendaftarDitolak = \App\Models\Pendaftaran::where('status', 'ditolak')->count();
-
-        // Ambil 10 pendaftar terbaru untuk ditampilkan di tabel
-        $pendaftarTerbaru = \App\Models\Pendaftaran::with('user', 'programStudi')
+        // Pendaftar terbaru
+        $pendaftarTerbaru = Pendaftaran::with('user', 'programStudi')
             ->latest()
             ->take(10)
             ->get();
 
-        // Kirim semua data ke view
+        // Grafik jumlah pendaftaran per hari (7 hari terakhir)
+        $pendaftaranPerHari = Pendaftaran::select(
+                DB::raw('DATE(created_at) as tanggal'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->where('created_at', '>=', now()->subDays(7)) // ambil 7 hari terakhir
+            ->groupBy('tanggal')
+            ->orderBy('tanggal', 'asc')
+            ->get();
+
         return view('admin.dashboard', compact(
             'totalPendaftar',
             'pendaftarPending',
             'pendaftarDiverifikasi',
             'pendaftarDitolak',
-            'pendaftarTerbaru'
+            'pendaftarTerbaru',
+            'pendaftaranPerHari'
         ));
     }
 }
-
-//         // BAGIAN INI MENGIRIMKAN $pendaftarans DAN $stats KE VIEW
-//         return view('admin.dashboard', compact('pendaftarans', 'stats'));
-//     }
-// }

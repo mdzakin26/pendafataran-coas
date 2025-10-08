@@ -69,4 +69,6 @@ class PendaftaranController extends Controller
             return back()->with('error', 'Terjadi Kesalahan. Silakan Coba Lagi. Detail: ' . $e->getMessage());
         }
     }
+    
+
 }

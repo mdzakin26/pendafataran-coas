@@ -1,105 +1,154 @@
-<div x-data="{ open: false }" class="flex h-screen bg-gray-100 dark:bg-gray-900">
-    <!-- Sidebar -->
-    <aside :class="open ? 'translate-x-0' : '-translate-x-full'"
-        class="fixed inset-y-0 left-0 z-30 w-64 bg-gray-800 text-gray-200 transition-transform duration-300 ease-in-out sm:translate-x-0">
+<div x-data="{ open: true, darkMode: localStorage.theme === 'dark' }" x-init="if (darkMode) document.documentElement.classList.add('dark');
+else document.documentElement.classList.remove('dark');" class="flex h-screen bg-gray-100 dark:bg-gray-900">
 
-        <!-- Logo / Header -->
-        <div class="flex items-center justify-center h-16 border-b border-gray-700">
-            <a href="{{ route('dashboard') }}">
+    <!-- Sidebar -->
+    <aside :class="open ? 'w-64' : 'w-20'"
+        class="fixed inset-y-0 left-0 z-30 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 
+               transition-all duration-300 shadow-xl flex flex-col border-r border-gray-200 dark:border-gray-700">
+
+        <!-- Header / Logo -->
+        <div class="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-2">
                 <img src="{{ asset('assets/logo-if.png') }}" alt="Logo" class="h-8">
-            </a>
+
+            </div>
+            <button @click="open = !open" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                <i class="bi" :class="open ? 'bi-chevron-left' : 'bi-chevron-right'"></i>
+            </button>
         </div>
 
         <!-- Navigation -->
-        <nav class="mt-6">
-            <ul class="space-y-2 px-4">
-                @if (Auth::user()->role === 'admin')
-                    <li>
-                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')"
-                            class="w-full block rounded-lg px-3 py-2 hover:bg-gray-700">
-                            {{ __('Beranda') }}
-                        </x-nav-link>
-                    </li>
-                    <li>
-                        <x-nav-link :href="route('admin.pendaftaran.index')" :active="request()->routeIs('admin.pendaftaran.*')"
-                            class="w-full block rounded-lg px-3 py-2 hover:bg-gray-700">
-                            {{ __('Pendaftar') }}
-                        </x-nav-link>
-                    </li>
-                    <li>
-                        <x-nav-link :href="route('admin.program-studi.index')" :active="request()->routeIs('admin.program-studi.*')"
-                            class="w-full block rounded-lg px-3 py-2 hover:bg-gray-700">
-                            {{ __('Program Studi') }}
-                        </x-nav-link>
-                    </li>
-                    <li>
-                        <x-nav-link :href="route('admin.matakuliah.index')" :active="request()->routeIs('admin.matakuliah.*')"
-                            class="w-full block rounded-lg px-3 py-2 hover:bg-gray-700">
-                            {{ __('Mata Kuliah') }}
-                        </x-nav-link>
-                    </li>
-                @else
-                    <li>
-                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
-                            class="w-full block rounded-lg px-3 py-2 hover:bg-gray-700">
-                            {{ __('Beranda') }}
-                        </x-nav-link>
-                    </li>
-                @endif
-            </ul>
+        <nav class="flex-1 px-2 py-4 space-y-2">
+            <!-- Dashboard -->
+            <a href="{{ route('dashboard') }}"
+                class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all 
+                      hover:bg-blue-400 hover:text-white 
+                      {{ request()->routeIs('dashboard') ? 'bg-blue-400 text-white' : '' }}">
+                <div class="p-2 rounded-md bg-gray-200 dark:bg-gray-700">
+                    <i class="bi bi-house"></i>
+                </div>
+                <span x-show="open"></span>
+            </a>
+
+            <!-- Menu Admin -->
+            @if (Auth::user()->role === 'admin')
+                <a href="{{ route('admin.pendaftaran.index') }}"
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all 
+                          hover:bg-blue-400 hover:text-white 
+                          {{ request()->routeIs('admin.pendaftaran.*') ? 'bg-blue-400 text-white' : '' }}">
+                    <div class="p-2 rounded-md bg-gray-200 dark:bg-gray-700">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <span x-show="open">Pendaftar</span>
+                </a>
+
+                <a href="{{ route('admin.program-studi.index') }}"
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all 
+                          hover:bg-blue-400 hover:text-white 
+                          {{ request()->routeIs('admin.program-studi.*') ? 'bg-blue-400 text-white' : '' }}">
+                    <div class="p-2 rounded-md bg-gray-200 dark:bg-gray-700">
+                        <i class="bi bi-journal-bookmark"></i>
+                    </div>
+                    <span x-show="open">Program Studi</span>
+                </a>
+
+                <a href="{{ route('admin.matakuliah.index') }}"
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all 
+                          hover:bg-blue-400 hover:text-white 
+                          {{ request()->routeIs('admin.matakuliah.*') ? 'bg-blue-400 text-white' : '' }}">
+                    <div class="p-2 rounded-md bg-gray-200 dark:bg-gray-700">
+                        <i class="bi bi-book"></i>
+                    </div>
+                    <span x-show="open">Mata Kuliah</span>
+                </a>
+                <a href="{{ route('admin.pendaftaran.laporan') }}"
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all 
+          hover:bg-blue-400 hover:text-white 
+          {{ request()->routeIs('admin.pendaftaran.laporan') ? 'bg-blue-400 text-white' : '' }}">
+                    <div class="p-2 rounded-md bg-gray-200 dark:bg-gray-700">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <span x-show="open">Laporan </span>
+                </a>
+            @else
+                <!-- Menu Mahasiswa -->
+                @php
+                    $pendaftaran = Auth::user()->pendaftaran ?? null;
+                    $status = $pendaftaran->status ?? 'Belum Daftar';
+                    $badgeColor = match ($status) {
+                        'pending' => 'bg-yellow-500 text-white',
+                        'diterima' => 'bg-green-600 text-white',
+                        'ditolak' => 'bg-red-600 text-white',
+                        default => 'bg-gray-400 text-white',
+                    };
+                @endphp
+
+                <a href="{{ route('mahasiswa.status') }}"
+                    class="flex items-center justify-between px-3 py-2 rounded-lg transition-all 
+                          hover:bg-blue-400 hover:text-white 
+                          {{ request()->routeIs('mahasiswa.status') ? 'bg-blue-400 text-white' : '' }}">
+
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 rounded-md bg-gray-200 dark:bg-gray-700">
+                            <i class="bi bi-check2-circle"></i>
+                        </div>
+                        <span x-show="open">Status Pendaftaran</span>
+                    </div>
+
+                    <!-- Badge -->
+                    <span class="text-xs px-2 py-1 rounded-full font-semibold {{ $badgeColor }}">
+                        {{ ucfirst($status) }}
+                    </span>
+                </a>
+            @endif
         </nav>
 
-        <!-- User Info -->
-        <div class="absolute bottom-0 w-full border-t border-gray-700 p-4">
-            <div class="mb-2">
-                <div class="font-medium text-base">{{ Auth::user()->name }}</div>
-                <div class="text-sm text-gray-400">{{ Auth::user()->email }}</div>
+        <!-- Footer -->
+        <div class="p-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
+            <div class="flex items-center gap-3">
+                <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}"
+                    class="h-10 w-10 rounded-full border">
+                <div x-show="open">
+                    <p class="text-sm font-medium">{{ Auth::user()->name }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ Auth::user()->email }}</p>
+                </div>
             </div>
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-sm text-gray-400">Mode</span>
-                <button @click="document.documentElement.classList.toggle('dark')"
-                    class="p-2 rounded bg-gray-200 dark:bg-gray-700">
-                    🌞 / 🌙
+
+            <!-- Dark Mode -->
+            <button
+                @click="
+                    darkMode = !darkMode;
+                    if (darkMode) { 
+                        document.documentElement.classList.add('dark'); 
+                        localStorage.theme = 'dark'; 
+                    } else { 
+                        document.documentElement.classList.remove('dark'); 
+                        localStorage.theme = 'light'; 
+                    }
+                "
+                class="flex items-center gap-3 w-full px-3 py-2 rounded-lg 
+                   bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white transition">
+                <i :class="darkMode ? 'bi bi-moon-fill' : 'bi bi-brightness-high-fill'"></i>
+                <span x-show="open" x-text="darkMode ? 'Dark Mode' : 'Light Mode'"></span>
+            </button>
+
+            <!-- Logout -->
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit"
+                    class="flex items-center gap-3 w-full px-3 py-2 rounded-lg 
+                   bg-red-100 dark:bg-red-700/30 text-red-600 dark:text-red-300 
+                   hover:bg-red-500 hover:text-white transition">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span x-show="open">Logout</span>
                 </button>
-            </div>
-            <div class="space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')" class="block rounded-lg px-3 py-2 hover:bg-gray-700">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <x-responsive-nav-link :href="route('logout')"
-                        onclick="event.preventDefault(); this.closest('form').submit();"
-                        class="block rounded-lg px-3 py-2 hover:bg-gray-700">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
-            </div>
-
+            </form>
         </div>
     </aside>
 
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col sm:ml-64">
-        <!-- Mobile header (toggle button) -->
-        <header
-            class="sm:hidden flex items-center justify-between h-16 px-4 bg-gray-800 text-gray-200 border-b border-gray-700">
-            <button @click="open = ! open" class="p-2 focus:outline-none">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 6h16M4 12h16M4 18h16" />
-                    <path x-show="open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <span class="font-bold">Dashboard</span>
-        </header>
-
-        <!-- Page content -->
-        {{-- <main class="flex-1 overflow-y-auto p-6">
-            {{ $slot }}
-        </main> --}}
-    </div>
 
 </div>
+
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">

@@ -1,19 +1,23 @@
 <x-app-layout>
     
 
-    <x-slot name="header">
+    {{-- <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Manajemen Program Studi') }}
             </h2>
-            <a href="{{ route('admin.program-studi.create') }}" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-300">
+           
+        </div>
+    </x-slot> --}}
+
+    
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-8">
+            <a href="{{ route('admin.program-studi.create') }}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4">
                 Tambah Program Studi
             </a>
         </div>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-10">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <div class="overflow-x-auto">
@@ -33,6 +37,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $prodi->fakultas }}</td>
                                     {{-- <td class="px-6 py-4 whitespace-nowrap">Rp {{ number_format($prodi->biaya_pendaftaran) }}</td> --}}
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                        
                                         <a href="{{ route('admin.program-studi.edit', $prodi) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
                                         <form action="{{ route('admin.program-studi.destroy', $prodi) }}" method="POST" class="inline" onsubmit="return confirm('Anda yakin ingin menghapus data ini?');">
                                             @csrf

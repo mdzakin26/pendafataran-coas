@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,22 +15,38 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
 <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
     <div class="flex min-h-screen">
 
         {{-- Sidebar --}}
         @include('layouts.sidebar')
+        {{-- End Sidebar --}}
 
         <!-- Main Content -->
-        <div class="flex-1">
-        <main>
+        <!-- Main Content -->
+<div x-data="{ open: true }" :class="open ? 'ml-64' : 'ml-20'" 
+     class="flex-1 flex flex-col transition-all duration-300">
+    <main class="p-6 flex justify-center">
+        <div class="w-full max-w-5xl">
             {{ $slot ?? '' }}
-            @yield('content')
-       </main>
+            {{-- @yield('content') --}}
         </div>
-       
-            
-       
+    </main>
+</div>
+        <!-- End Main Content -->
     </div>
+
+    <script>
+        if (
+            localStorage.theme === 'dark' ||
+            (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
 </body>
+
 </html>

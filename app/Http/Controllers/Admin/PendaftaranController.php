@@ -9,6 +9,9 @@ use App\Notifications\StatusPendaftaranUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Notification;
+use App\Models\Dokumen;
+
 
 class PendaftaranController extends Controller
 {
@@ -123,4 +126,48 @@ class PendaftaranController extends Controller
 
         return redirect()->route('admin.dashboard')->with('success', 'Data pendaftar berhasil dihapus secara permanen.');
     }
+
+    public function viewDokumen($id)
+{
+    $dokumen = Dokumen::findOrFail($id);
+
+    $path = 'dokumen/' . $dokumen->path_file;
+
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404, 'File tidak ditemukan.');
+    }
+
+    // buka langsung di browser
+    return response()->file(storage_path('app/public/' . $path));
+}
+
+    public function downloadDokumen($id)
+    {
+        // cari dokumen berdasarkan id
+        $dokumen = Dokumen::findOrFail($id);
+
+        // path file di storage
+        $path = 'dokumens/' . $dokumen->path_file;
+
+        if (!Storage::disk('public')->exists($path)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        // download dengan nama asli
+        return Storage::disk('public')->download($path, $dokumen->nama_file ?? basename($dokumen->path_file));
+    }
+
+    public function laporan()
+{
+    $pendaftarans = \App\Models\Pendaftaran::with('user', 'programStudi', 'matakuliah', 'jadwal')->get();
+
+    // Data ringkasan untuk dashboard laporan
+    $ringkasan = [
+        'pending'   => $pendaftarans->where('status', 'pending')->count(),
+        'diterima'  => $pendaftarans->where('status', 'diverifikasi')->count(),
+        'ditolak'   => $pendaftarans->where('status', 'ditolak')->count(),
+    ];
+
+    return view('admin.pendaftaran.laporan', compact('pendaftarans', 'ringkasan'));
+}
 }

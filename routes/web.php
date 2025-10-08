@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PendaftaranController;
+use App\Http\Controllers\StatusController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ProgramStudiController;
 use App\Http\Controllers\Admin\PendaftaranController as AdminPendaftaranController;
+use App\Http\Controllers\Admin\PendaftaranExportController;
 use App\Http\Controllers\Admin\MatakuliahController;
 use App\Http\Controllers\Admin\JadwalMatakuliahController;
 
@@ -16,7 +18,16 @@ use App\Http\Controllers\Admin\JadwalMatakuliahController;
 |--------------------------------------------------------------------------
 */
 
-// Route untuk menampilkan file dokumen secara aman
+// ===============================
+// Route Umum
+// ===============================
+
+// Landing page
+Route::get('/', function () {
+    return view('welcome');
+});
+
+// Menampilkan file dokumen pendaftaran secara aman
 Route::get('/dokumen-pendaftaran/{namafile}', function ($namafile) {
     $path = 'public/dokumen/' . $namafile;
 
@@ -27,12 +38,9 @@ Route::get('/dokumen-pendaftaran/{namafile}', function ($namafile) {
     return Storage::response($path);
 })->name('dokumen.show');
 
-// Route untuk halaman utama (landing page)
-Route::get('/', function () {
-    return view('welcome');
-});
-
-// Route /dashboard utama (cek role user)
+// ===============================
+// Dashboard utama
+// ===============================
 Route::get('/dashboard', function () {
     if (auth()->user()->role === 'admin') {
         return redirect()->route('admin.dashboard');
@@ -40,38 +48,61 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Grup route setelah login (mahasiswa & admin)
+// ===============================
+// Grup route setelah login (Mahasiswa & Admin)
+// ===============================
 Route::middleware('auth')->group(function () {
+    // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Formulir Pendaftaran (hanya mahasiswa)
+    // Formulir Pendaftaran (Mahasiswa)
     Route::get('/formulir-pendaftaran', [PendaftaranController::class, 'create'])->name('pendaftaran.create');
     Route::post('/formulir-pendaftaran', [PendaftaranController::class, 'store'])->name('pendaftaran.store');
+
+    // Status Pendaftaran (Mahasiswa)
+    Route::get('/mahasiswa/status', [StatusController::class, 'index'])->name('mahasiswa.status');
 });
 
+// ===============================
 // Grup route ADMIN
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+// ===============================
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
 
-    // CRUD Program Studi
-    Route::resource('program-studi', ProgramStudiController::class);
+        // Dashboard admin
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-    // CRUD Pendaftaran
-    Route::get('/pendaftar', [AdminPendaftaranController::class, 'index'])->name('pendaftaran.index');
-    Route::get('/pendaftaran/{pendaftaran}', [AdminPendaftaranController::class, 'show'])->name('pendaftaran.show');
-    Route::get('/pendaftaran/{pendaftaran}/edit', [AdminPendaftaranController::class, 'edit'])->name('pendaftaran.edit');
-    Route::put('/pendaftaran/{pendaftaran}', [AdminPendaftaranController::class, 'update'])->name('pendaftaran.update');
-    Route::delete('/pendaftaran/{pendaftaran}', [AdminPendaftaranController::class, 'destroy'])->name('pendaftaran.destroy');
-    Route::post('/pendaftaran/{pendaftaran}/verifikasi', [AdminPendaftaranController::class, 'verifikasi'])->name('pendaftaran.verifikasi');
+        // CRUD Program Studi
+        Route::resource('program-studi', ProgramStudiController::class);
 
-    // CRUD Mata Kuliah
-    Route::resource('matakuliah', MatakuliahController::class);
+        // CRUD Pendaftaran Admin
+        Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
+            Route::get('/', [AdminPendaftaranController::class, 'index'])->name('index');
+            Route::get('/laporan', [AdminPendaftaranController::class, 'laporan'])->name('laporan');
+            Route::get('/export', [PendaftaranExportController::class, 'export'])->name('export');
+            Route::get('/{pendaftaran}', [AdminPendaftaranController::class, 'show'])->name('show');
+            Route::get('/{pendaftaran}/edit', [AdminPendaftaranController::class, 'edit'])->name('edit');
+            Route::put('/{pendaftaran}', [AdminPendaftaranController::class, 'update'])->name('update');
+            Route::delete('/{pendaftaran}', [AdminPendaftaranController::class, 'destroy'])->name('destroy');
+            Route::post('/{pendaftaran}/verifikasi', [AdminPendaftaranController::class, 'verifikasi'])->name('verifikasi');
 
-    // CRUD Jadwal Mata Kuliah
-    Route::resource('jadwal', JadwalMatakuliahController::class);
-});
+            // Dokumen pendaftaran
+            Route::get('/dokumen/view/{id}', [AdminPendaftaranController::class, 'viewDokumen'])->name('dokumen.view');
+            Route::get('/dokumen/download/{id}', [AdminPendaftaranController::class, 'downloadDokumen'])->name('dokumen.download');
+        });
 
-// File yang mengatur route otentikasi (login, register, dll)
+        // CRUD Mata Kuliah
+        Route::resource('matakuliah', MatakuliahController::class);
+
+        // CRUD Jadwal Mata Kuliah
+        Route::resource('jadwal', JadwalMatakuliahController::class);
+    });
+
+// ===============================
+// Auth (Login, Register, dll.)
+// ===============================
 require __DIR__ . '/auth.php';
