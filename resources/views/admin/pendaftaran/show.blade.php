@@ -62,17 +62,15 @@
                                     </dd>
                                 </div>
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Asal Program Studi
-                                    </dt>
+                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Program Studi</dt>
                                     <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                                        {{ $pendaftaran->programStudi->nama_prodi }}
+                                        {{ $pendaftaran->programStudi->nama_prodi ?? '-' }}
                                     </dd>
                                 </div>
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Mata Kuliah Pilihan
-                                    </dt>
+                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Mata Kuliah Pilihan</dt>
                                     <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                                        {{ $pendaftaran->matakuliah->nama }}
+                                        {{ $pendaftaran->matakuliah->nama ?? '-' }}
                                     </dd>
                                 </div>
                                 <div class="sm:col-span-2">
@@ -91,8 +89,7 @@
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
                                 Dokumen Terlampir
                             </h3>
-                            <ul
-                                class="mt-4 border-t border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
+                            <ul class="mt-4 border-t border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
                                 @forelse ($pendaftaran->dokumens as $dokumen)
                                     <li class="flex items-center justify-between py-3">
                                         <div class="flex items-center">
@@ -107,22 +104,21 @@
                                             </span>
                                         </div>
                                         <div class="flex space-x-2">
-                                            {{-- <a href="{{ route('admin.dokumen.view', $dokumen->id) }}" target="_blank"
+                                            <a href="{{ route('admin.pendaftaran.dokumen.view', $dokumen->id) }}"
+                                                target="_blank"
                                                 class="px-3 py-1 bg-green-600 text-white text-xs font-semibold rounded-md hover:bg-green-700 transition">
                                                 Lihat
-                                            </a> --}}
-                                            {{-- <a href="{{ route('admin.dokumen.download', $dokumen->id) }}"
+                                            </a>
+                                            <a href="{{ route('admin.pendaftaran.dokumen.download', $dokumen->id) }}"
                                                 class="px-3 py-1 bg-indigo-600 text-white text-xs font-semibold rounded-md hover:bg-indigo-700 transition">
                                                 Unduh
-                                            </a> --}}
+                                            </a>
                                         </div>
                                     </li>
-
                                 @empty
                                     <li class="py-3 text-sm text-gray-500">Tidak ada dokumen terlampir.</li>
                                 @endforelse
                             </ul>
-
                         </div>
                     </div>
                 </div>
@@ -140,16 +136,13 @@
                                     <x-input-label for="status" value="Ubah Status Pendaftaran" />
                                     <select id="status" name="status"
                                         class="block mt-1 w-full rounded-md shadow-sm border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="diverifikasi" @selected($pendaftaran->status == 'diverifikasi')>Diverifikasi (Terima)
-                                        </option>
+                                        <option value="diverifikasi" @selected($pendaftaran->status == 'diverifikasi')>Diverifikasi (Terima)</option>
                                         <option value="ditolak" @selected($pendaftaran->status == 'ditolak')>Ditolak</option>
-                                        <option value="pending" @selected($pendaftaran->status == 'pending')>Kembalikan ke Pending
-                                        </option>
+                                        <option value="pending" @selected($pendaftaran->status == 'pending')>Kembalikan ke Pending</option>
                                     </select>
                                 </div>
                                 <div class="mt-4">
-                                    <x-input-label for="catatan_admin"
-                                        value="Catatan untuk Mahasiswa (Wajib jika ditolak)" />
+                                    <x-input-label for="catatan_admin" value="Catatan untuk Mahasiswa (Wajib jika ditolak)" />
                                     <textarea id="catatan_admin" name="catatan_admin" rows="4"
                                         class="block mt-1 w-full rounded-md shadow-sm border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500">{{ old('catatan_admin', $pendaftaran->catatan_admin) }}</textarea>
                                 </div>

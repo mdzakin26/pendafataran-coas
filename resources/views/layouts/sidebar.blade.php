@@ -27,7 +27,7 @@ else document.documentElement.classList.remove('dark');" class="flex h-screen bg
                 <div class="p-2 rounded-md bg-gray-200 dark:bg-gray-700">
                     <i class="bi bi-house"></i>
                 </div>
-                <span x-show="open"></span>
+                <span x-show="open">Beranda</span>
             </a>
 
             <!-- Menu Admin -->

@@ -1,59 +1,57 @@
 <x-app-layout>
     @php
-    $pendaftaran = \App\Models\Pendaftaran::with(['programStudi'])
-        ->where('user_id', \Illuminate\Support\Facades\Auth::id())
-        ->first();
-@endphp
+        $pendaftaran = \App\Models\Pendaftaran::with('programStudi')
+            ->where('user_id', auth()->id())
+            ->first();
+    @endphp
 
-    <div class="w-full h-[calc(100vh-64px)] flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-900 dark:to-gray-950">
-        <div class="max-w-md w-full px-6 animate-fade-in">
-            
-            {{-- Card Status Pendaftaran --}}
-            <div class="relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 shadow-2xl hover:scale-[1.02] transition-all duration-500">
+    <div class="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
+        <div class="max-w-md w-full">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
                 <div class="p-8 text-center">
-                    <div class="flex justify-center">
-                        <div class="p-3 bg-indigo-600/20 rounded-full mb-4">
-                            <img src="{{ asset('images/form-icon.svg') }}" alt="Form" class="w-12 h-12">
+
+                    {{-- Ikon header --}}
+                    <div class="flex justify-center mb-4">
+                        <div class="p-3 bg-indigo-100 dark:bg-indigo-900 rounded-full">
+                            <span class="text-indigo-600 dark:text-indigo-300 text-3xl">📄</span>
                         </div>
                     </div>
 
-                    @if($pendaftaran)
-                        <h3 class="text-xl font-semibold text-green-400">Pendaftaran Ditemukan</h3>
-                        <p class="mt-3 text-gray-300 leading-relaxed">
-                            Anda sudah mendaftar pada program studi 
-                            <span class="font-semibold text-white">
-                                {{ $pendaftaran->programStudi->nama ?? '-' }}
-                            </span>.
+                    {{-- Kondisi status pendaftaran --}}
+                    @if ($pendaftaran)
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                            Pendaftaran Ditemukan
+                        </h3>
+                        <p class="mt-2 text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                            Anda telah mendaftar pada program studi:
                         </p>
-                        <a href="{{ route('mahasiswa.status') }}"
-                            class="mt-6 inline-block px-6 py-3 rounded-lg bg-gradient-to-r from-green-500 to-green-700 text-white font-medium hover:shadow-lg hover:shadow-green-500/40 transition-all duration-300">
-                            Lihat Status
-                        </a>
+                        <p class="mt-1 text-indigo-600 dark:text-indigo-400 font-semibold">
+                            {{ $pendaftaran->programStudi->nama_prodi ?? '-' }}
+                        </p>
+
+                        <div class="mt-6">
+                            <a href="{{ route('mahasiswa.status') }}"
+                                class="inline-block px-5 py-2.5 rounded-md bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition">
+                                Lihat Status Pendaftaran
+                            </a>
+                        </div>
                     @else
-                        <h3 class="text-xl font-semibold text-white">Belum Ada Pendaftaran</h3>
-                        <p class="mt-3 text-gray-300 leading-relaxed">
-                            Lengkapi formulir untuk memulai proses pendaftaran Anda.
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                            Belum Ada Pendaftaran
+                        </h3>
+                        <p class="mt-2 text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                            Silakan lengkapi formulir untuk memulai proses pendaftaran Anda.
                         </p>
-                        <a href="{{ route('pendaftaran.create') }}"
-                            class="mt-6 inline-block px-6 py-3 rounded-lg bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-medium hover:shadow-lg hover:shadow-indigo-500/40 transition-all duration-300">
-                            Lengkapi Formulir
-                        </a>
+
+                        <div class="mt-6">
+                            <a href="{{ route('pendaftaran.create') }}"
+                                class="inline-block px-5 py-2.5 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition">
+                                Lengkapi Formulir
+                            </a>
+                        </div>
                     @endif
                 </div>
-
-                <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent rounded-2xl pointer-events-none"></div>
             </div>
         </div>
     </div>
-
-    {{-- Animasi Fade-in --}}
-    <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.8s ease-in-out;
-        }
-    </style>
 </x-app-layout>

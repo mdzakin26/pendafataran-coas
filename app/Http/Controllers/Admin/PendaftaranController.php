@@ -5,26 +5,24 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Pendaftaran;
 use App\Models\ProgramStudi;
+use App\Models\Dokumen;
 use App\Notifications\StatusPendaftaranUpdated;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Notification;
-use App\Models\Dokumen;
-
+use Illuminate\Validation\Rule;
 
 class PendaftaranController extends Controller
 {
-
+    /**
+     * Tampilkan daftar pendaftar dengan fitur pencarian & filter status.
+     */
     public function index(Request $request)
     {
-        // Ambil keyword pencarian dan status filter dari URL
         $search = $request->query('search');
         $status = $request->query('status');
 
-        $query = Pendaftaran::with('user', 'programStudi');
+        $query = Pendaftaran::with(['user', 'programStudi']);
 
-        // Jika ada keyword pencarian, filter berdasarkan nama atau email user
         if ($search) {
             $query->whereHas('user', function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%')
@@ -32,7 +30,6 @@ class PendaftaranController extends Controller
             });
         }
 
-        // Jika ada filter status, filter berdasarkan status
         if ($status) {
             $query->where('status', $status);
         }
@@ -41,54 +38,47 @@ class PendaftaranController extends Controller
 
         return view('admin.pendaftaran.index', compact('pendaftarans', 'search', 'status'));
     }
+
     /**
-     * Menampilkan detail pendaftaran.
+     * Tampilkan detail pendaftaran.
      */
     public function show(Pendaftaran $pendaftaran)
     {
-        //  Menambahkan load() untuk Eager Loading agar lebih efisien
-        // Ini memastikan data relasi (user, prodi, dokumens) diambil dalam satu query.
-        $pendaftaran->load('user', 'programStudi', 'dokumens');
-
+        $pendaftaran->load(['user', 'programStudi', 'dokumens']);
         return view('admin.pendaftaran.show', compact('pendaftaran'));
     }
 
     /**
-     * Memproses aksi verifikasi atau tolak.
+     * Verifikasi / tolak pendaftaran.
      */
     public function verifikasi(Request $request, Pendaftaran $pendaftaran)
     {
-        // Validasi input dari form
         $request->validate([
             'status' => ['required', Rule::in(['diverifikasi', 'ditolak', 'pending'])],
             'catatan_admin' => 'required_if:status,ditolak|nullable|string|max:1000',
         ]);
 
-        // Update data pendaftaran di database
         $pendaftaran->update([
             'status' => $request->status,
             'catatan_admin' => $request->catatan_admin,
         ]);
 
-        $pesanSukses = 'Status pendaftaran untuk ' . $pendaftaran->user->name . ' telah berhasil diupdate.';
+        $pesanSukses = 'Status pendaftaran untuk ' . $pendaftaran->user->name . ' berhasil diperbarui.';
 
-        // PERBAIKAN: Menambahkan kondisi agar notifikasi tidak dikirim jika statusnya 'pending'
         if ($request->status !== 'pending') {
             try {
                 $pendaftaran->user->notify(new StatusPendaftaranUpdated($pendaftaran));
                 $pesanSukses .= ' Notifikasi telah dikirim.';
             } catch (\Exception $e) {
-                return redirect()->route('admin.dashboard')
-                    ->with('success', 'Status berhasil diupdate, tetapi notifikasi email gagal dikirim. Error: ' . $e->getMessage());
+                return back()->with('success', 'Status berhasil diupdate, tapi notifikasi gagal dikirim. Error: ' . $e->getMessage());
             }
         }
 
-        // Redirect kembali ke dashboard admin dengan pesan sukses
         return redirect()->route('admin.dashboard')->with('success', $pesanSukses);
     }
 
     /**
-     * Menampilkan form untuk mengedit data pendaftaran.
+     * Form edit data pendaftaran.
      */
     public function edit(Pendaftaran $pendaftaran)
     {
@@ -97,7 +87,7 @@ class PendaftaranController extends Controller
     }
 
     /**
-     * Menyimpan perubahan dari form edit.
+     * Simpan hasil edit data pendaftaran.
      */
     public function update(Request $request, Pendaftaran $pendaftaran)
     {
@@ -106,68 +96,72 @@ class PendaftaranController extends Controller
             'alamat' => 'required|string|max:255',
         ]);
 
-        $pendaftaran->update($request->all());
+        $pendaftaran->update($request->only(['program_studi_id', 'alamat']));
 
-        return redirect()->route('admin.pendaftaran.show', $pendaftaran->id)->with('success', 'Data pendaftar berhasil diperbarui.');
+        return redirect()
+            ->route('admin.pendaftaran.show', $pendaftaran->id)
+            ->with('success', 'Data pendaftar berhasil diperbarui.');
     }
 
     /**
-     * Menghapus data pendaftaran dari database.
+     * Hapus data pendaftaran dan semua dokumennya.
      */
-    public function destroy(Pendaftaran $pendaftaran)
-    {
-        foreach ($pendaftaran->dokumens as $dokumen) {
-            // Menghapus file fisik dari storage
-            Storage::delete($dokumen->path_file);
-        }
-
-        // Menghapus data dari database
-        $pendaftaran->delete();
-
-        return redirect()->route('admin.dashboard')->with('success', 'Data pendaftar berhasil dihapus secara permanen.');
-    }
-
+    /**
+     * Lihat dokumen (khusus admin).
+     */
     public function viewDokumen($id)
-{
-    $dokumen = Dokumen::findOrFail($id);
-
-    $path = 'dokumen/' . $dokumen->path_file;
-
-    if (!Storage::disk('public')->exists($path)) {
-        abort(404, 'File tidak ditemukan.');
-    }
-
-    // buka langsung di browser
-    return response()->file(storage_path('app/public/' . $path));
-}
-
-    public function downloadDokumen($id)
     {
-        // cari dokumen berdasarkan id
         $dokumen = Dokumen::findOrFail($id);
 
-        // path file di storage
-        $path = 'dokumens/' . $dokumen->path_file;
+        // Ambil nama file dari path di database
+        $filename = basename($dokumen->path_file);
 
-        if (!Storage::disk('public')->exists($path)) {
+        // Path file di storage private
+        $filePath = storage_path('app/private/public/dokumen/' . $filename);
+
+        if (!file_exists($filePath)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        // download dengan nama asli
-        return Storage::disk('public')->download($path, $dokumen->nama_file ?? basename($dokumen->path_file));
+        // Tampilkan file langsung di browser (gambar/pdf/dll)
+        return response()->file($filePath);
     }
 
+    /**
+     * Download dokumen (khusus admin).
+     */
+    public function downloadDokumen($id)
+    {
+        $dokumen = Dokumen::findOrFail($id);
+
+        $filename = basename($dokumen->path_file);
+        $filePath = storage_path('app/private/public/dokumen/' . $filename);
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        // Unduh file
+        return response()->download($filePath);
+    }
+
+    
+
+
+
+    /**
+     * Laporan seluruh pendaftaran.
+     */
     public function laporan()
-{
-    $pendaftarans = \App\Models\Pendaftaran::with('user', 'programStudi', 'matakuliah', 'jadwal')->get();
+    {
+        $pendaftarans = Pendaftaran::with(['user', 'programStudi'])->get();
 
-    // Data ringkasan untuk dashboard laporan
-    $ringkasan = [
-        'pending'   => $pendaftarans->where('status', 'pending')->count(),
-        'diterima'  => $pendaftarans->where('status', 'diverifikasi')->count(),
-        'ditolak'   => $pendaftarans->where('status', 'ditolak')->count(),
-    ];
+        $ringkasan = [
+            'pending'       => $pendaftarans->where('status', 'pending')->count(),
+            'diverifikasi'  => $pendaftarans->where('status', 'diverifikasi')->count(),
+            'ditolak'       => $pendaftarans->where('status', 'ditolak')->count(),
+        ];
 
-    return view('admin.pendaftaran.laporan', compact('pendaftarans', 'ringkasan'));
-}
+        return view('admin.pendaftaran.laporan', compact('pendaftarans', 'ringkasan'));
+    }
 }

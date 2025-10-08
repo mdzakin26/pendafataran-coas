@@ -18,56 +18,54 @@ use App\Http\Controllers\Admin\JadwalMatakuliahController;
 |--------------------------------------------------------------------------
 */
 
-// ===============================
+// ============================================================================
 // Route Umum
-// ===============================
-
-// Landing page
+// ============================================================================
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Menampilkan file dokumen pendaftaran secara aman
+// Menampilkan file dokumen pendaftaran untuk mahasiswa (storage/app/private/dokumen)
 Route::get('/dokumen-pendaftaran/{namafile}', function ($namafile) {
-    $path = 'public/dokumen/' . $namafile;
+    $path = storage_path('app/private/dokumen/' . $namafile);
 
-    if (!Storage::exists($path)) {
-        abort(404);
+    if (!file_exists($path)) {
+        abort(404, 'File tidak ditemukan.');
     }
 
-    return Storage::response($path);
-})->name('dokumen.show');
+    return response()->file($path);
+})->middleware('auth')->name('dokumen.show');
 
-// ===============================
+// ============================================================================
 // Dashboard utama
-// ===============================
+// ============================================================================
 Route::get('/dashboard', function () {
-    if (auth()->user()->role === 'admin') {
+    if (auth()->check() && auth()->user()->role === 'admin') {
         return redirect()->route('admin.dashboard');
     }
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// ===============================
-// Grup route setelah login (Mahasiswa & Admin)
-// ===============================
+// ============================================================================
+// Grup route untuk Mahasiswa (login diperlukan)
+// ============================================================================
 Route::middleware('auth')->group(function () {
-    // Profile
+    // Profile pengguna
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Formulir Pendaftaran (Mahasiswa)
+    // Formulir pendaftaran
     Route::get('/formulir-pendaftaran', [PendaftaranController::class, 'create'])->name('pendaftaran.create');
     Route::post('/formulir-pendaftaran', [PendaftaranController::class, 'store'])->name('pendaftaran.store');
 
-    // Status Pendaftaran (Mahasiswa)
+    // Status pendaftaran mahasiswa
     Route::get('/mahasiswa/status', [StatusController::class, 'index'])->name('mahasiswa.status');
 });
 
-// ===============================
-// Grup route ADMIN
-// ===============================
+// ============================================================================
+// Grup route untuk ADMIN
+// ============================================================================
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
@@ -79,20 +77,23 @@ Route::middleware(['auth', 'admin'])
         // CRUD Program Studi
         Route::resource('program-studi', ProgramStudiController::class);
 
-        // CRUD Pendaftaran Admin
+        // CRUD Pendaftaran
         Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
             Route::get('/', [AdminPendaftaranController::class, 'index'])->name('index');
             Route::get('/laporan', [AdminPendaftaranController::class, 'laporan'])->name('laporan');
             Route::get('/export', [PendaftaranExportController::class, 'export'])->name('export');
+
             Route::get('/{pendaftaran}', [AdminPendaftaranController::class, 'show'])->name('show');
             Route::get('/{pendaftaran}/edit', [AdminPendaftaranController::class, 'edit'])->name('edit');
             Route::put('/{pendaftaran}', [AdminPendaftaranController::class, 'update'])->name('update');
             Route::delete('/{pendaftaran}', [AdminPendaftaranController::class, 'destroy'])->name('destroy');
             Route::post('/{pendaftaran}/verifikasi', [AdminPendaftaranController::class, 'verifikasi'])->name('verifikasi');
 
-            // Dokumen pendaftaran
-            Route::get('/dokumen/view/{id}', [AdminPendaftaranController::class, 'viewDokumen'])->name('dokumen.view');
-            Route::get('/dokumen/download/{id}', [AdminPendaftaranController::class, 'downloadDokumen'])->name('dokumen.download');
+            // Dokumen pendaftaran (akses file private)
+            Route::get('/dokumen/view/{id}', [AdminPendaftaranController::class, 'viewDokumen'])
+                ->name('dokumen.view');
+            Route::get('/dokumen/download/{id}', [AdminPendaftaranController::class, 'downloadDokumen'])
+                ->name('dokumen.download');
         });
 
         // CRUD Mata Kuliah
@@ -102,7 +103,7 @@ Route::middleware(['auth', 'admin'])
         Route::resource('jadwal', JadwalMatakuliahController::class);
     });
 
-// ===============================
+// ============================================================================
 // Auth (Login, Register, dll.)
-// ===============================
+// ============================================================================
 require __DIR__ . '/auth.php';

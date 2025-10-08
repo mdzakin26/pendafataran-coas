@@ -16,7 +16,7 @@
                 </div>
                 <div class="p-6 bg-green-50 dark:bg-green-900 text-green-800 dark:text-green-300 rounded-lg shadow hover:shadow-md transition">
                     <h3 class="text-sm font-semibold">Diterima</h3>
-                    <p class="text-3xl font-bold mt-2">{{ $ringkasan['diterima'] }}</p>
+                    <p class="text-3xl font-bold mt-2">{{ $ringkasan['diverifikasi'] }}</p>
                 </div>
                 <div class="p-6 bg-red-50 dark:bg-red-900 text-red-800 dark:text-red-300 rounded-lg shadow hover:shadow-md transition">
                     <h3 class="text-sm font-semibold">Ditolak</h3>
