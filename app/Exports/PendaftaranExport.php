@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Exports;
 
 use App\Models\Pendaftaran;
@@ -11,32 +10,34 @@ class PendaftaranExport implements FromCollection, WithHeadings, WithMapping
 {
     public function collection()
     {
-        return Pendaftaran::with('user', 'programStudi', 'matakuliah')->get();
+        return Pendaftaran::with(['user', 'programStudi', 'matakuliah'])->get();
     }
 
     public function headings(): array
     {
         return [
-            'Nama Lengkap',
+            'Nama',
             'Email',
-            'Nomor Telepon',
             'Program Studi',
-            'Mata Kuliah Pilihan',
+            'Mata Kuliah',
             'Status',
             'Tanggal Daftar'
         ];
     }
 
-    public function map($pendaftaran): array
-    {
-        return [
-            $pendaftaran->user->name ?? '-',
-            $pendaftaran->user->email ?? '-',
-            $pendaftaran->no_telepon ?? '-',
-            $pendaftaran->programStudi->nama ?? '-',
-            $pendaftaran->matakuliah->nama ?? '-',
-            ucfirst($pendaftaran->status ?? '-'),
-            $pendaftaran->created_at->format('d-m-Y'),
-        ];
-    }
+    public function map($p): array
+{
+    return [
+        $p->user->name ?? '-',
+        $p->user->email ?? '-',
+        $p->programStudi->nama_prodi ?? '-',
+
+        // mata kuliah yang diambil user
+        $p->matakuliah->pluck('nama')->join(', ') ?: '-',
+
+        $p->status ?? '-',
+        $p->created_at->format('d-m-Y'),
+    ];
+}
+
 }

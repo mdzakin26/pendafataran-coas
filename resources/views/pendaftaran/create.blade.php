@@ -75,7 +75,9 @@
                         <div class="mt-6">
                             <label for="jadwal_id" class="block text-sm font-medium text-gray-700">Pilih Jadwal</label>
                             <select name="jadwal_id" id="jadwal_id"
-                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 
+                                       dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 
+                                       focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                                 <option value="">-- Pilih Jadwal --</option>
                                 @foreach ($jadwals as $jadwal)
                                     <option value="{{ $jadwal->id }}">

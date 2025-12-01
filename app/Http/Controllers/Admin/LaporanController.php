@@ -4,26 +4,28 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pendaftaran;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\PendaftaranExport;
+
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class LaporanController extends Controller
 {
     public function index()
     {
-        // Ambil pendaftar (untuk tabel)
-        $pendaftarans = Pendaftaran::with(['user', 'programStudi', 'matakuliah'])
+        // TABEL
+        $pendaftarans = Pendaftaran::with(['user', 'programStudi', 'matakuliah','dokumens'])
             ->latest()
-            ->paginate(10); // paginate agar tabel lebih ringan
+            ->paginate(10);
 
-        // Ringkasan status
+        // RINGKASAN
         $ringkasan = [
             'pending'      => Pendaftaran::where('status', 'pending')->count(),
             'diverifikasi' => Pendaftaran::where('status', 'diverifikasi')->count(),
             'ditolak'      => Pendaftaran::where('status', 'ditolak')->count(),
         ];
 
-        // 1) Data untuk grafik status (labelsStatus, valuesStatus)
+        // CHART STATUS
         $labelsStatus = ['Pending', 'Diverifikasi', 'Ditolak'];
         $valuesStatus = [
             $ringkasan['pending'],
@@ -31,9 +33,10 @@ class LaporanController extends Controller
             $ringkasan['ditolak'],
         ];
 
-        // 2) Data untuk grafik mingguan: 7 minggu terakhir (labelsMinggu, valuesMinggu)
+        // CHART MINGGU
         $labelsMinggu = [];
         $valuesMinggu = [];
+
         for ($i = 6; $i >= 0; $i--) {
             $start = Carbon::now()->subWeeks($i)->startOfWeek();
             $end = Carbon::now()->subWeeks($i)->endOfWeek();
@@ -42,28 +45,18 @@ class LaporanController extends Controller
             $valuesMinggu[] = Pendaftaran::whereBetween('created_at', [$start, $end])->count();
         }
 
-        // 3) Data untuk grafik program studi (labelsProdi, valuesProdi)
-        $prodiData = Pendaftaran::selectRaw('program_studi_id, COUNT(*) as total')
-            ->groupBy('program_studi_id')
-            ->with('programStudi')
-            ->get();
-
-        // Jika tidak ada program studi (null), hindari error dengan fallback
-        $labelsProdi = $prodiData->map(function ($row) {
-            return $row->programStudi->nama_prodi ?? 'Tidak Diketahui';
-        })->toArray();
-
-        $valuesProdi = $prodiData->pluck('total')->toArray();
-
         return view('admin.laporan.index', compact(
             'pendaftarans',
             'ringkasan',
             'labelsStatus',
             'valuesStatus',
             'labelsMinggu',
-            'valuesMinggu',
-            'labelsProdi',
-            'valuesProdi'
+            'valuesMinggu'
         ));
     }
+
+    public function export()
+{
+    return Excel::download(new PendaftaranExport, 'laporan_pendaftar.xlsx');
+}
 }

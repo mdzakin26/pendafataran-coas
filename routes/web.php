@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\PendaftaranExportController;
 use App\Http\Controllers\Admin\MatakuliahController;
 use App\Http\Controllers\Admin\JadwalMatakuliahController;
 use App\Http\Controllers\Admin\LaporanController;
+use maatwebsite\Excel\Facades\Excel;
 
 /*
 |--------------------------------------------------------------------------
@@ -101,11 +102,14 @@ Route::middleware(['auth', 'admin'])
 
         // laporan pendaftaran
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
+         Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
         // CRUD Mata Kuliah
         Route::resource('matakuliah', MatakuliahController::class);
 
         // CRUD Jadwal Mata Kuliah
         Route::resource('jadwal', JadwalMatakuliahController::class);
+       
+       
     });
 
 // ============================================================================
