@@ -113,7 +113,7 @@ class PendaftaranController extends Controller
     {
         $dokumen = Dokumen::findOrFail($id);
 
-        // Ambil nama file dari path di database
+        // Ambil nama file yang disimpan di database
         $filename = basename($dokumen->path_file);
 
         // Path file di storage private
@@ -123,13 +123,10 @@ class PendaftaranController extends Controller
             abort(404, 'File tidak ditemukan.');
         }
 
-        // Tampilkan file langsung di browser (gambar/pdf/dll)
+        // Tampilkan langsung di browser
         return response()->file($filePath);
     }
 
-    /**
-     * Download dokumen (khusus admin).
-     */
     public function downloadDokumen($id)
     {
         $dokumen = Dokumen::findOrFail($id);
@@ -141,11 +138,11 @@ class PendaftaranController extends Controller
             abort(404, 'File tidak ditemukan.');
         }
 
-        // Unduh file
-        return response()->download($filePath);
+        // Download file
+        return response()->download($filePath, $filename);
     }
 
-    
+
 
 
 

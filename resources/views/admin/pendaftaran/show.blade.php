@@ -84,43 +84,50 @@
                     </div>
 
                     {{-- Dokumen --}}
-                    <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg overflow-hidden">
-                        <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                                Dokumen Terlampir
-                            </h3>
-                            <ul class="mt-4 border-t border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
-                                @forelse ($pendaftaran->dokumens as $dokumen)
-                                    <li class="flex items-center justify-between py-3">
-                                        <div class="flex items-center">
-                                            <svg class="h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg"
-                                                fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                                stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m-1.125 0H5.625A2.25 2.25 0 003.375 7.5v11.25c0 .621.504 1.125 1.125 1.125h9.75M8.25 2.25h.375a3.375 3.375 0 013.375 3.375v1.5a1.125 1.125 0 001.125 1.125h1.5a3.375 3.375 0 013.375 3.375M12.75 19.5h-5.25" />
-                                            </svg>
-                                            <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                {{ $dokumen->tipe_dokumen }}
-                                            </span>
-                                        </div>
-                                        <div class="flex space-x-2">
-                                            <a href="{{ route('admin.pendaftaran.dokumen.view', $dokumen->id) }}"
-                                                target="_blank"
-                                                class="px-3 py-1 bg-green-600 text-white text-xs font-semibold rounded-md hover:bg-green-700 transition">
-                                                Lihat
-                                            </a>
-                                            <a href="{{ route('admin.pendaftaran.dokumen.download', $dokumen->id) }}"
-                                                class="px-3 py-1 bg-indigo-600 text-white text-xs font-semibold rounded-md hover:bg-indigo-700 transition">
-                                                Unduh
-                                            </a>
-                                        </div>
-                                    </li>
-                                @empty
-                                    <li class="py-3 text-sm text-gray-500">Tidak ada dokumen terlampir.</li>
-                                @endforelse
-                            </ul>
-                        </div>
+                    {{-- Dokumen --}}
+<div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg overflow-hidden">
+    <div class="p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Dokumen Terlampir
+        </h3>
+        <ul class="mt-4 border-t border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
+            @forelse ($pendaftaran->dokumens as $dokumen)
+                <li class="flex items-center justify-between py-3">
+                    <div class="flex items-center">
+                        <svg class="h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m-1.125 0H5.625A2.25 2.25 0 003.375 7.5v11.25c0 .621.504 1.125 1.125 1.125h9.75M8.25 2.25h.375a3.375 3.375 0 013.375 3.375v1.5a1.125 1.125 0 001.125 1.125h1.5a3.375 3.375 0 013.375 3.375M12.75 19.5h-5.25" />
+                        </svg>
+                        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {{ $dokumen->tipe_dokumen }}
+                        </span>
                     </div>
+                    <div class="flex space-x-2">
+
+                        {{-- Tombol LIHAT --}}
+                        <a href="{{ route('admin.pendaftaran.dokumen.view', $dokumen->id) }}"
+                            target="_blank"
+                            class="px-3 py-1 bg-green-600 text-white text-xs font-semibold rounded-md hover:bg-green-700 transition">
+                            Lihat
+                        </a>
+
+                        {{-- Tombol DOWNLOAD --}}
+                        <a href="{{ route('admin.pendaftaran.dokumen.download', $dokumen->id) }}"
+                            class="px-3 py-1 bg-indigo-600 text-white text-xs font-semibold rounded-md hover:bg-indigo-700 transition">
+                            Unduh
+                        </a>
+
+                    </div>
+                </li>
+            @empty
+                <li class="py-3 text-sm text-gray-500">Tidak ada dokumen terlampir.</li>
+            @endforelse
+        </ul>
+    </div>
+</div>
+
                 </div>
 
                 {{-- Kolom Kanan --}}

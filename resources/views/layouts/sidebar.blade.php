@@ -61,14 +61,14 @@ else document.documentElement.classList.remove('dark');" class="flex h-screen bg
                     </div>
                     <span x-show="open">Mata Kuliah</span>
                 </a>
-                <a href="{{ route('admin.pendaftaran.laporan') }}"
+                <a href="{{ route('admin.laporan') }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all 
           hover:bg-blue-400 hover:text-white 
-          {{ request()->routeIs('admin.pendaftaran.laporan') ? 'bg-blue-400 text-white' : '' }}">
+          {{ request()->routeIs('admin.laporan') ? 'bg-blue-400 text-white' : '' }}">
                     <div class="p-2 rounded-md bg-gray-200 dark:bg-gray-700">
                         <i class="bi bi-graph-up"></i>
                     </div>
-                    <span x-show="open">Laporan </span>
+                    <span x-show="open">Laporan</span>
                 </a>
             @else
                 <!-- Menu Mahasiswa -->
