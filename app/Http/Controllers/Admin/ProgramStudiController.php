@@ -24,7 +24,7 @@ class ProgramStudiController extends Controller
         $request->validate([
             'nama_prodi' => 'required|string|max:255|unique:program_studis',
             'fakultas' => 'required|string|max:255',
-            'biaya_pendaftaran' => 'required|integer|min:0',
+            
         ]);
 
         ProgramStudi::create($request->all());

@@ -1,140 +1,90 @@
 <x-app-layout>
-    @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-        <script>
-            const ctx = document.getElementById('pendaftaranChart').getContext('2d');
-
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: @json($labels),
-                    datasets: [{
-                        label: 'Jumlah Pendaftar per Minggu',
-                        data: @json($values),
-                        borderColor: 'rgb(75, 192, 192)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        </script>
-    @endpush
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Laporan Pendaftaran') }}
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
+            Laporan Pendaftaran
         </h2>
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+        <div class="max-w-7xl mx-auto space-y-10">
 
-            {{-- 📊 Grafik Pendaftaran per Minggu --}}
-            <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Grafik Pendaftaran per Minggu
+            {{-- GRAPH --}}
+            <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-6">
+                    Grafik Berdasarkan Status
                 </h3>
-                <canvas id="pendaftaranChart" height="100"></canvas>
-            </div>
-
-            {{-- Ringkasan Statistik --}}
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <div
-                    class="p-6 bg-yellow-50 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 rounded-lg shadow hover:shadow-md transition">
-                    <h3 class="text-sm font-semibold">Menunggu Verifikasi</h3>
-                    <p class="text-3xl font-bold mt-2">{{ $ringkasan['pending'] }}</p>
-                </div>
-                <div
-                    class="p-6 bg-green-50 dark:bg-green-900 text-green-800 dark:text-green-300 rounded-lg shadow hover:shadow-md transition">
-                    <h3 class="text-sm font-semibold">Diterima</h3>
-                    <p class="text-3xl font-bold mt-2">{{ $ringkasan['diverifikasi'] }}</p>
-                </div>
-                <div
-                    class="p-6 bg-red-50 dark:bg-red-900 text-red-800 dark:text-red-300 rounded-lg shadow hover:shadow-md transition">
-                    <h3 class="text-sm font-semibold">Ditolak</h3>
-                    <p class="text-3xl font-bold mt-2">{{ $ringkasan['ditolak'] }}</p>
+                <div class="h-64">
+                    <canvas id="chartStatus"></canvas>
                 </div>
             </div>
 
-            {{-- Tabel Data Pendaftar --}}
-            <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg overflow-hidden">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Daftar Pendaftar</h3>
+            <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-6">
+                    Grafik Pendaftar Mingguan
+                </h3>
+                <div class="h-64">
+                    <canvas id="chartMinggu"></canvas>
+                </div>
+            </div>
 
-                    <div class="overflow-x-auto">
-                        <table
-                            class="min-w-full border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0">
-                                <tr>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                        Nama</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                        Program Studi</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                        Mata Kuliah</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                        Status</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                                        Tanggal Daftar</th>
-                                </tr>
-                            </thead>
-
-                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                @forelse($pendaftarans as $p)
-                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                                        <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-200">
-                                            {{ $p->user->name ?? '-' }}
-                                        </td>
-
-                                        <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-200">
-                                            {{ $p->programStudi->nama_prodi ?? '-' }}
-                                        </td>
-
-                                        <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-200">
-                                            {{ $p->matakuliah->nama ?? '-' }}
-                                        </td>
-
-                                        <td class="px-6 py-4 text-sm">
-                                            @if ($p->status == 'pending')
-                                                <span
-                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100">Pending</span>
-                                            @elseif($p->status == 'diverifikasi')
-                                                <span
-                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">Diterima</span>
-                                            @elseif($p->status == 'ditolak')
-                                                <span
-                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100">Ditolak</span>
-                                            @endif
-                                        </td>
-
-                                        <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-200">
-                                            {{ $p->created_at->format('d M Y') }}
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="text-center text-gray-500 dark:text-gray-400 py-4">
-                                            Belum ada data pendaftar.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+            <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-6">
+                    Grafik Program Studi
+                </h3>
+                <div class="h-72">
+                    <canvas id="chartProdi"></canvas>
                 </div>
             </div>
 
         </div>
     </div>
+
+    {{-- ===================== SCRIPT ===================== --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        console.log("STATUS:", @json($labelsStatus), @json($valuesStatus));
+        console.log("MINGGU:", @json($labelsMinggu), @json($valuesMinggu));
+        console.log("PRODI :", @json($labelsProdi), @json($valuesProdi));
+
+        // ---- STATUS ----
+        new Chart(document.getElementById("chartStatus"), {
+            type: "pie",
+            data: {
+                labels: @json($labelsStatus),
+                datasets: [{
+                    data: @json($valuesStatus),
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        // ---- MINGGU ----
+        new Chart(document.getElementById("chartMinggu"), {
+            type: "line",
+            data: {
+                labels: @json($labelsMinggu),
+                datasets: [{
+                    data: @json($valuesMinggu),
+                    fill: true,
+                    tension: 0.3,
+                    borderWidth: 2
+                }]
+            }
+        });
+
+        // ---- PRODI ----
+        new Chart(document.getElementById("chartProdi"), {
+            type: "bar",
+            data: {
+                labels: @json($labelsProdi),
+                datasets: [{
+                    data: @json($valuesProdi),
+                    borderWidth: 1
+                }]
+            }
+        });
+    </script>
+
 </x-app-layout>

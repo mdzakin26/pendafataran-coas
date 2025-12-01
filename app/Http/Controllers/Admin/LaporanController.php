@@ -4,16 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pendaftaran;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class LaporanController extends Controller
 {
     public function index()
     {
-        // Data pendaftaran
+        // Ambil pendaftar (untuk tabel)
         $pendaftarans = Pendaftaran::with(['user', 'programStudi', 'matakuliah'])
             ->latest()
-            ->get();
+            ->paginate(10); // paginate agar tabel lebih ringan
 
         // Ringkasan status
         $ringkasan = [
@@ -22,28 +23,47 @@ class LaporanController extends Controller
             'ditolak'      => Pendaftaran::where('status', 'ditolak')->count(),
         ];
 
-        // Grafik pendaftaran per minggu
-        $dataPerMinggu = Pendaftaran::select(
-                DB::raw('YEARWEEK(created_at, 1) as minggu'),
-                DB::raw('COUNT(*) as total')
-            )
-            ->groupBy('minggu')
-            ->orderBy('minggu', 'asc')
-            ->limit(7)
+        // 1) Data untuk grafik status (labelsStatus, valuesStatus)
+        $labelsStatus = ['Pending', 'Diverifikasi', 'Ditolak'];
+        $valuesStatus = [
+            $ringkasan['pending'],
+            $ringkasan['diverifikasi'],
+            $ringkasan['ditolak'],
+        ];
+
+        // 2) Data untuk grafik mingguan: 7 minggu terakhir (labelsMinggu, valuesMinggu)
+        $labelsMinggu = [];
+        $valuesMinggu = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $start = Carbon::now()->subWeeks($i)->startOfWeek();
+            $end = Carbon::now()->subWeeks($i)->endOfWeek();
+
+            $labelsMinggu[] = $start->format('d M') . ' - ' . $end->format('d M');
+            $valuesMinggu[] = Pendaftaran::whereBetween('created_at', [$start, $end])->count();
+        }
+
+        // 3) Data untuk grafik program studi (labelsProdi, valuesProdi)
+        $prodiData = Pendaftaran::selectRaw('program_studi_id, COUNT(*) as total')
+            ->groupBy('program_studi_id')
+            ->with('programStudi')
             ->get();
 
-        // Siapkan label + value untuk Chart.js
-        $labels = $dataPerMinggu->map(function ($item) {
-            return 'Minggu ' . substr($item->minggu, -2);
-        });
+        // Jika tidak ada program studi (null), hindari error dengan fallback
+        $labelsProdi = $prodiData->map(function ($row) {
+            return $row->programStudi->nama_prodi ?? 'Tidak Diketahui';
+        })->toArray();
 
-        $values = $dataPerMinggu->pluck('total');
+        $valuesProdi = $prodiData->pluck('total')->toArray();
 
-        return view('admin.laporan.index', [
-            'pendaftarans' => $pendaftarans,
-            'ringkasan'    => $ringkasan,
-            'labels'       => $labels,
-            'values'       => $values
-        ]);
+        return view('admin.laporan.index', compact(
+            'pendaftarans',
+            'ringkasan',
+            'labelsStatus',
+            'valuesStatus',
+            'labelsMinggu',
+            'valuesMinggu',
+            'labelsProdi',
+            'valuesProdi'
+        ));
     }
 }

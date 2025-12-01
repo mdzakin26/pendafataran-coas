@@ -42,7 +42,7 @@
 
                             @if($pendaftaran->catatan_admin)
                                 <div class="mt-4 bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                                    <strong>Catatan Admin:</strong>
+                                    <strong>Catatan:</strong>
                                     <p class="mt-2 text-sm leading-relaxed">{{ $pendaftaran->catatan_admin }}</p>
                                 </div>
                             @endif
@@ -55,10 +55,7 @@
                                 ← Kembali ke Dashboard
                             </a>
 
-                            <a href="{{ route('pendaftaran.create') }}" 
-                               class="inline-flex items-center px-5 py-2.5 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
-                                + Daftar Lagi
-                            </a>
+                            
                         </div>
                     @else
                         {{-- Jika belum daftar --}}

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pendaftaran;
 use App\Models\ProgramStudi;
 use App\Models\Matakuliah;
-use App\Models\Jadwal; // ✅ tambahkan ini
+use App\Models\Jadwal; // 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +22,7 @@ class PendaftaranController extends Controller
 
         $programStudis = ProgramStudi::all();
         $matakuliahs   = Matakuliah::all();
-        $jadwals       = Jadwal::all(); // ✅ ambil jadwal + relasi matakuliah
+        $jadwals       = Jadwal::all(); 
 
         return view('pendaftaran.create', compact('programStudis', 'matakuliahs', 'jadwals'));
     }
@@ -33,7 +33,7 @@ class PendaftaranController extends Controller
         $request->validate([
             'program_studi_id' => 'required|exists:program_studis,id',
             'matakuliah_id'    => 'required|exists:matakuliahs,id',
-            'jadwal_id'        => 'required|exists:jadwals,id', // ✅ validasi jadwal
+            'jadwal_id'        => 'required|exists:jadwals,id', // 
             'alamat'           => 'required|string|max:255',
             'dokumen_cv'       => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
@@ -46,7 +46,7 @@ class PendaftaranController extends Controller
                 'user_id'         => Auth::id(),
                 'program_studi_id'=> $request->program_studi_id,
                 'matakuliah_id'   => $request->matakuliah_id,
-                'jadwal_id'       => $request->jadwal_id, // ✅ simpan jadwal yg dipilih
+                'jadwal_id'       => $request->jadwal_id, // 
                 'alamat'          => $request->alamat,
                 'status'          => 'pending',
                 'catatan_admin'   => null,

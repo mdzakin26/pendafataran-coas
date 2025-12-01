@@ -71,10 +71,23 @@ else document.documentElement.classList.remove('dark');" class="flex h-screen bg
                     <span x-show="open">Laporan</span>
                 </a>
             @else
-                <!-- Menu Mahasiswa -->
+                <!-- ================= MENU MAHASISWA ================= -->
+
+                <!-- Isi Pendaftaran -->
+                <a href="{{ route('pendaftaran.create') }}"
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all 
+              hover:bg-blue-400 hover:text-white 
+              {{ request()->routeIs('pendaftaran.create') ? 'bg-blue-400 text-white' : '' }}">
+                    <div class="p-2 rounded-md bg-gray-200 dark:bg-gray-700">
+                        <i class="bi bi-pencil-square"></i>
+                    </div>
+                    <span x-show="open">Isi Pendaftaran</span>
+                </a>
+
                 @php
                     $pendaftaran = Auth::user()->pendaftaran ?? null;
                     $status = $pendaftaran->status ?? 'Belum Daftar';
+
                     $badgeColor = match ($status) {
                         'pending' => 'bg-yellow-500 text-white',
                         'diterima' => 'bg-green-600 text-white',
@@ -83,10 +96,11 @@ else document.documentElement.classList.remove('dark');" class="flex h-screen bg
                     };
                 @endphp
 
+                <!-- Status Pendaftaran -->
                 <a href="{{ route('mahasiswa.status') }}"
                     class="flex items-center justify-between px-3 py-2 rounded-lg transition-all 
-                          hover:bg-blue-400 hover:text-white 
-                          {{ request()->routeIs('mahasiswa.status') ? 'bg-blue-400 text-white' : '' }}">
+              hover:bg-blue-400 hover:text-white 
+              {{ request()->routeIs('mahasiswa.status') ? 'bg-blue-400 text-white' : '' }}">
 
                     <div class="flex items-center gap-3">
                         <div class="p-2 rounded-md bg-gray-200 dark:bg-gray-700">
@@ -95,12 +109,16 @@ else document.documentElement.classList.remove('dark');" class="flex h-screen bg
                         <span x-show="open">Status Pendaftaran</span>
                     </div>
 
-                    <!-- Badge -->
-                    <span class="text-xs px-2 py-1 rounded-full font-semibold {{ $badgeColor }}">
-                        {{ ucfirst($status) }}
-                    </span>
+                    <!-- Badge status -->
+                    @if ($pendaftaran)
+                        <span class="text-xs px-2 py-1 rounded-full font-semibold {{ $badgeColor }}">
+                            {{ ucfirst($status) }}
+                        </span>
+                    @endif
                 </a>
+
             @endif
+
         </nav>
 
         <!-- Footer -->
