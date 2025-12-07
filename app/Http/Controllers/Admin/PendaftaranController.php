@@ -35,8 +35,25 @@ class PendaftaranController extends Controller
         }
 
         $pendaftarans = $query->latest()->paginate(10)->withQueryString();
+        // Statistik umum
+        $totalPendaftar = Pendaftaran::count();
+        $pendaftarPending = Pendaftaran::where('status', 'pending')->count();
+        $pendaftarDiverifikasi = Pendaftaran::where('status', 'diverifikasi')->count();
+        $pendaftarDitolak = Pendaftaran::where('status', 'ditolak')->count();
 
-        return view('admin.pendaftaran.index', compact('pendaftarans', 'search', 'status'));
+        // Pendaftar terbaru
+        $pendaftarTerbaru = Pendaftaran::with('user', 'programStudi')
+            ->latest()
+            ->take(10)
+            ->get();
+
+        return view('admin.pendaftaran.index', compact('pendaftarans', 'search', 'status','totalPendaftar',
+            'pendaftarPending',
+            'pendaftarDiverifikasi',
+            'pendaftarDitolak',
+            'pendaftarTerbaru',
+            ));
+        
     }
 
     /**
@@ -102,6 +119,8 @@ class PendaftaranController extends Controller
             ->route('admin.pendaftaran.show', $pendaftaran->id)
             ->with('success', 'Data pendaftar berhasil diperbarui.');
     }
+
+    
 
     /**
      * Hapus data pendaftaran dan semua dokumennya.

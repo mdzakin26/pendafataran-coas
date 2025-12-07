@@ -21,13 +21,14 @@
 
                         {{-- Isi Detail --}}
                         <div class="space-y-3 text-gray-700 dark:text-gray-300">
-                            <p><strong>Program Studi:</strong> {{ $pendaftaran->programStudi->nama ?? '-' }}</p>
+                            <p><strong>Program Studi:</strong> {{ $pendaftaran->programStudi->nama_prodi ?? '-' }}</p>
                             <p><strong>Mata Kuliah:</strong> {{ $pendaftaran->matakuliah->nama ?? '-' }}</p>
                             <p><strong>Jadwal:</strong> 
-                                {{ $pendaftaran->jadwal->hari ?? '-' }} - {{ $pendaftaran->jadwal->jam ?? '-' }}
-                            </p>
+                                {{ $pendaftaran->jadwal->hari ?? '-' }} ({{ $pendaftaran->jadwal->jam_mulai ?? '-' }} - {{ $pendaftaran->jadwal->jam_selesai ?? '-' }}
+        )                             </p>
                             <p><strong>Alamat:</strong> {{ $pendaftaran->alamat ?? '-' }}</p>
-
+                            <p><strong>Nomor Telepon:</strong> {{ $pendaftaran->user->no_telepon ?? '-' }}</p>
+                          
                             <p>
                                 <strong>Status:</strong> 
                                 <span class="px-3 py-1 rounded-full text-sm font-medium

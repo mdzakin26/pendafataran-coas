@@ -122,7 +122,7 @@
     <footer class="bg-gray-900 text-gray-300 py-8 mt-12">
         <div class="container mx-auto px-6 text-center space-y-4">
             <p class="text-sm">&copy; {{ date('Y') }} Informatika LPKIA. All rights reserved.</p>
-            {{-- <p class="text-xs">Dibangun dengan ❤️ menggunakan Laravel & Tailwind CSS</p> --}}
+            {{-- <p class="text-xs">Dibangun dengan menggunakan Laravel & Tailwind CSS</p> --}}
         </div>
     </footer>
 </body>

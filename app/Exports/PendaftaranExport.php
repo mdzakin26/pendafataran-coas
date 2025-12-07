@@ -20,6 +20,7 @@ class PendaftaranExport implements FromCollection, WithHeadings, WithMapping
             'Email',
             'Program Studi',
             'Mata Kuliah',
+            'jadwal',
             'Status',
             'Tanggal Daftar'
         ];
@@ -31,10 +32,7 @@ class PendaftaranExport implements FromCollection, WithHeadings, WithMapping
         $p->user->name ?? '-',
         $p->user->email ?? '-',
         $p->programStudi->nama_prodi ?? '-',
-
-        // mata kuliah yang diambil user
-        $p->matakuliah->pluck('nama')->join(', ') ?: '-',
-
+        $p->matakuliah->nama ?? '-',
         $p->status ?? '-',
         $p->created_at->format('d-m-Y'),
     ];

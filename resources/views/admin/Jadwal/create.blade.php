@@ -44,7 +44,7 @@
                                 <x-input-label for="semester" :value="__('Semester')" />
                                 <select id="semester" name="semester"
                                     class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                    @for($i = 1; $i <= 14; $i++)
+                                    @for($i = 3; $i <= 8; $i++)
                                         <option value="{{ $i }}">Semester {{ $i }}</option>
                                     @endfor
                                 </select>

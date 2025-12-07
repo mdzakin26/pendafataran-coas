@@ -109,19 +109,20 @@
                 <div class="p-6 space-y-4 text-gray-700 dark:text-gray-300 max-h-[60vh] overflow-y-auto">
                     <div>
                         <h4 class="font-semibold">Langkah 1: Membuat Akun</h4>
-                        <p class="text-sm mt-1">Isi semua data pada formulir ini (Nama, NIK, Email, No. Telepon, Tanggal Lahir, dan Password) dengan data yang valid, lalu klik tombol "Register".</p>
+                        <p class="text-sm mt-1">Isi semua data pada formulir ini (Nama Lengkap, NRP, Email, No. Telepon, Tanggal Lahir, dan Password) dengan data yang valid, lalu klik tombol "Register".</p>
                     </div>
                     <div>
-                        <h4 class="font-semibold">Langkah 2: Melengkapi Pendaftaran</h4>
-                        <p class="text-sm mt-1">Setelah berhasil membuat akun, Anda akan diarahkan ke Dashboard. Klik tombol "Lengkapi Formulir Sekarang" untuk melanjutkan ke tahap pengisian data alamat dan upload dokumen.</p>
+                        <h4 class="font-semibold">Langkah 2: Login ke Sistem</h4>
+                        <p class="text-sm mt-1">Setelah akun berhasil dibuat, silakan login menggunakan email dan password yang baru Anda daftarkan.
+Anda akan diarahkan ke halaman Dashboard Pendaftar.</p>
                     </div>
                     <div>
-                        <h4 class="font-semibold">Langkah 3: Upload Dokumen</h4>
-                        <p class="text-sm mt-1">Siapkan scan KTP dan Ijazah terakhir Anda dalam format PDF, JPG, atau PNG dengan ukuran maksimal 2MB, lalu unggah pada form yang tersedia.</p>
+                        <h4 class="font-semibold">Langkah 3: Mengisi Formulir Pendaftaran</h4>
+                        <p class="text-sm mt-1"> Pilih progam studi anda , masukkan jadwal mata kuliah yang ingin anda dapatkan dalam assisten dosen ini,Lalu Siapkan CV  Anda dalam format PDF, JPG, atau PNG dengan ukuran maksimal 2MB, lalu unggah pada form yang tersedia.</p>
                     </div>
                     <div>
                         <h4 class="font-semibold">Langkah 4: Proses Verifikasi</h4>
-                        <p class="text-sm mt-1">Setelah Anda mengirim formulir pendaftaran, status Anda akan menjadi "Pending". Tim admin kami akan memeriksa data dan dokumen Anda. Anda akan menerima notifikasi melalui email jika status pendaftaran Anda sudah diupdate.</p>
+                        <p class="text-sm mt-1">Setelah Anda mengirim formulir pendaftaran, status Anda akan menjadi "Pending". Tim staff kami akan memeriksa data dan dokumen Anda. Anda bisa melihat status jika status pendaftaran Anda sudah diupdate.</p>
                     </div>
                 </div>
                 <div class="bg-gray-50 dark:bg-gray-700/50 px-6 py-3 text-right">

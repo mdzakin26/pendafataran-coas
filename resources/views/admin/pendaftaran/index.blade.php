@@ -1,5 +1,23 @@
 {{-- resources/views/admin/pendaftaran/index.blade.php --}}
 <x-app-layout>
+     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg p-6">
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Pendaftar</h3>
+                    <p class="mt-1 text-3xl font-semibold text-gray-900 dark:text-gray-200">{{ $totalPendaftar }}</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg p-6">
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Menunggu Verifikasi</h3>
+                    <p class="mt-1 text-3xl font-semibold text-yellow-500">{{ $pendaftarPending }}</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg p-6">
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Diterima</h3>
+                    <p class="mt-1 text-3xl font-semibold text-green-500">{{ $pendaftarDiverifikasi }}</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg p-6">
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Ditolak</h3>
+                    <p class="mt-1 text-3xl font-semibold text-red-500">{{ $pendaftarDitolak }}</p>
+                </div>
+            </div>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
@@ -25,7 +43,7 @@
                                                rounded-md shadow-sm">
                                     <option value="">Semua Status</option>
                                     <option value="pending" @if(isset($status) && $status=='pending') selected @endif>Pending</option>
-                                    <option value="diverifikasi" @if(isset($status) && $status=='diverifikasi') selected @endif>Diverifikasi</option>
+                                    <option value="diverifikasi" @if(isset($status) && $status=='diverifikasi') selected @endif>Diterima</option>
                                     <option value="ditolak" @if(isset($status) && $status=='ditolak') selected @endif>Ditolak</option>
                                 </select>
                             </div>

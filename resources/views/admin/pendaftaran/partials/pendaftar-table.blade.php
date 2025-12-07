@@ -1,79 +1,59 @@
-{{-- resources/views/admin/pendaftaran/partials/pendaftar-table.blade.php --}}
-<div class="overflow-x-auto mt-6">
-    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        <thead class="bg-gray-50 dark:bg-gray-700">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Nama</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Program Studi</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Mata Kuliah</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Jadwal</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Tanggal Daftar</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
-                <th class="relative px-6 py-3"></th>
+<div class="w-full">
+    <table class="min-w-full table-auto border-collapse">
+        <thead>
+            <tr class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+                <th class="px-4 py-2 text-left">Nama</th>
+                <th class="px-4 py-2">Program Studi</th>
+                <th class="px-4 py-2">Mata Kuliah</th>
+                <th class="px-4 py-2">Jadwal</th>
+                <th class="px-4 py-2">Tanggal Daftar</th>
+                <th class="px-4 py-2">Status</th>
+                <th class="px-4 py-2">Aksi</th>
             </tr>
         </thead>
 
-        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            @forelse ($pendaftarans as $pendaftaran)
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                {{-- Nama Mahasiswa --}}
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {{ $pendaftaran->user->name ?? '-' }}
-                </td>
+        <tbody class="bg-white dark:bg-gray-800">
+            @foreach ($pendaftarans as $p)
+                <tr class="border-b border-gray-200 dark:border-gray-700">
+                    <td class="px-4 py-2">{{ $p->user->name ?? '-' }}</td>
+                    <td class="px-4 py-2">{{ $p->programStudi->nama_prodi ?? '-' }}</td>
+                    <td class="px-4 py-2">{{ $p->mataKuliah->nama ?? '-' }}</td>
+                    <td class="px-4 py-2">
+                        {{ $p->jadwal->hari ?? '-' }},
+                        {{ $p->jadwal->jam_mulai ?? '-' }} -
+                        {{ $p->jadwal->jam_selesai ?? '-' }}
+                    </td>
+                    <td class="px-4 py-2">{{ \Carbon\Carbon::parse($p->created_at)->format('d M Y') }}</td>
 
-                {{-- Program Studi --}}
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {{ $pendaftaran->programStudi->nama_prodi ?? '-' }}
-                </td>
+                    <td class="px-4 py-2">
+                        @if ($p->status === 'pending')
+                            <span class="px-3 py-1 rounded-full bg-yellow-200 text-yellow-800 text-sm">Pending</span>
+                        @elseif ($p->status === 'diverifikasi')
+                            <span class="px-3 py-1 rounded-full bg-green-200 text-green-800 text-sm">DiTerima</span>
+                        @else
+                            <span class="px-3 py-1 rounded-full bg-red-200 text-red-800 text-sm">Ditolak</span>
+                        @endif
+                    </td>
 
-                {{-- Mata Kuliah --}}
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {{ $pendaftaran->matakuliah->nama ?? '-' }}
-                </td>
+                    <td class="px-4 py-2">
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('admin.pendaftaran.show', $p->id) }}"
+                                class="text-blue-400 hover:underline">Detail</a>
 
-                {{-- Jadwal --}}
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    @if ($pendaftaran->jadwal)
-                        {{ $pendaftaran->jadwal->hari }},
-                        {{ $pendaftaran->jadwal->jam_mulai }} - {{ $pendaftaran->jadwal->jam_selesai }}
-                    @else
-                        -
-                    @endif
-                </td>
+                            <a href="{{ route('admin.pendaftaran.edit', $p->id) }}"
+                                class="text-yellow-400 hover:underline">Edit</a>
 
-                {{-- Tanggal Daftar --}}
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {{ $pendaftaran->created_at->format('d M Y') }}
-                </td>
+                            <form action="{{ route('admin.pendaftaran.destroy', $p->id) }}" method="POST"
+                                onsubmit="return confirm('Hapus data ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-400 hover:underline">Hapus</button>
+                            </form>
+                        </div>
+                    </td>
 
-                {{-- Status --}}
-                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                    @if($pendaftaran->status == 'pending')
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Menunggu Verifikasi</span>
-                    @elseif($pendaftaran->status == 'diverifikasi')
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Diverifikasi</span>
-                    @else
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Ditolak</span>
-                    @endif
-                </td>
-
-                {{-- Tombol Detail --}}
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <a href="{{ route('admin.pendaftaran.show', $pendaftaran->id) }}" 
-                       class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200">
-                       Detail
-                    </a>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">Tidak ada data ditemukan.</td>
-            </tr>
-            @endforelse
+                </tr>
+            @endforeach
         </tbody>
     </table>
-</div>
-
-<div class="mt-4">
-    {{ $pendaftarans->links() }}
 </div>

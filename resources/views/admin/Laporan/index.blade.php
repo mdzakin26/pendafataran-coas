@@ -6,13 +6,14 @@
         </h2>
     </x-slot>
 
+    <!-- ========================== GRAFIK ========================== -->
     <div class="py-8">
         <div class="max-w-7xl mx-auto space-y-10">
 
-            {{-- 2 KOLOM GRAFIK --}}
+            <!-- GRID GRAFIK -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                {{-- PIE STATUS --}}
+                <!-- PIE STATUS -->
                 <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
                         Grafik Berdasarkan Status
@@ -22,7 +23,7 @@
                     </div>
                 </div>
 
-                {{-- GRAFIK MINGGUAN --}}
+                <!-- GRAFIK MINGGUAN -->
                 <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
                         Grafik Pendaftar Mingguan
@@ -37,80 +38,117 @@
         </div>
     </div>
 
-
-    {{-- DATA PENDAFTAR --}}
+    <!-- ========================== DATA PENDAFTAR ========================== -->
     <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow rounded-lg p-6 mt-10">
-<a href="{{ route('admin.laporan.export') }}"
-   class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-   Export Excel
-</a>
+
+        <!-- EXPORT -->
+        <div class="mb-4">
+            <a href="{{ route('admin.laporan.export') }}"
+                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                Export Excel
+            </a>
+        </div>
 
         <h2 class="text-xl font-semibold dark:text-gray-100 mb-4">Data Pendaftar</h2>
 
         <div class="overflow-x-auto">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-100 dark:bg-gray-700 border-b border-gray-300 dark:border-gray-600">
-                            <th class="px-4 py-3 text-gray-900 dark:text-gray-200 font-semibold">Nama</th>
-                            <th class="px-4 py-3 text-gray-900 dark:text-gray-200 font-semibold">Email</th>
-                            <th class="px-4 py-3 text-gray-900 dark:text-gray-200 font-semibold">Program Studi</th>
-                            <th class="px-4 py-3 text-gray-900 dark:text-gray-200 font-semibold">Status</th>
-                            <th class="px-4 py-3 text-gray-900 dark:text-gray-200 font-semibold">Tanggal</th>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-100 dark:bg-gray-700 border-b border-gray-300 dark:border-gray-600">
+                        <th class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">Nama</th>
+                        <th class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">Email</th>
+                        <th class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">Program Studi</th>
+                        <th class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">Status</th>
+                        
+                        <th class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-200">Tanggal</th>
+                    </tr>
+                </thead>
+
+                <tbody class="dark:text-gray-100">
+                    @foreach ($pendaftarans as $p)
+                        <tr
+                            class="border-b border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 transition">
+
+                            <td class="px-4 py-3">
+                                {{ $p->user->name }}
+                            </td>
+
+                            <td class="px-4 py-3">
+                                {{ $p->user->email }}
+                            </td>
+
+                            <td class="px-4 py-3">
+                                {{ $p->programStudi->nama_prodi ?? '-' }}
+                            </td>
+
+                            <td class="px-4 py-3">
+                                <span
+                                    class="
+                                    px-2 py-1 rounded text-xs font-semibold
+                                    @if (strtolower($p->status) == 'diverifikasi') bg-green-600 text-white
+                                    @elseif (strtolower($p->status) == 'pending') bg-yellow-500 text-white
+                                    @elseif (strtolower($p->status) == 'ditolak') bg-red-600 text-white
+                                    @else bg-gray-500 text-white @endif">
+                                    {{ ucfirst($p->status) }}
+                                </span>
+                            </td>
+
+                            <td class="px-4 py-3">
+                                {{ $p->created_at->format('d M Y') }}
+                            </td>
+
                         </tr>
-                    </thead>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
 
-                    <tbody class="dark:text-gray-100">
-                        @foreach ($pendaftarans as $p)
-                            <tr
-                                class="border-b border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 transition">
+    </div>
+    <!-- ========================== PENDAFTAR DITERIMA ========================== -->
+    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow rounded-lg p-6 mt-10">
 
-                                <td class="px-4 py-3">
-                                    {{ $p->user->name }}
-                                </td>
+        <h2 class="text-xl font-semibold dark:text-gray-100 mb-4">Pendaftar Diterima</h2>
 
-                                <td class="px-4 py-3">
-                                    {{ $p->user->email }}
-                                </td>
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-left">
+                <thead>
+                    <tr class="bg-green-200 dark:bg-green-700 border-b border-gray-300 dark:border-gray-600">
+                        <th class="px-4 py-3 font-semibold ext-gray-900 dark:text-gray-200">Nama</th>
+                        <th class="px-4 py-3 font-semibold ext-gray-900 dark:text-gray-200">Email</th>
+                        <th class="px-4 py-3 font-semibold ext-gray-900 dark:text-gray-200">Program Studi</th>
+                        <th class="px-4 py-3 font-semibold ext-gray-900 dark:text-gray-200">Tanggal Diterima</th>
+                        <th class="px-4 py-3 font-semibold ext-gray-900 dark:text-gray-200">Aksi</th>
+                    </tr>
+                </thead>
 
-                                <td class="px-4 py-3">
-                                    {{ $p->programStudi->nama_prodi ?? '-' }}
-                                </td>
-
-                                <td class="px-4 py-3">
-                                    <span
-                                        class="
-        px-2 py-1 rounded text-xs font-semibold
-        @if (strtolower($p->status) == 'diverifikasi') bg-green-600 text-white
-        @elseif (strtolower($p->status) == 'pending') bg-yellow-500 text-white
-        @elseif (strtolower($p->status) == 'ditolak') bg-red-600 text-white
-        @else bg-gray-500 text-white @endif
-    ">
-                                        {{ ucfirst($p->status) }}
-                                    </span>
-                                </td>
-
-
-                                <td class="px-4 py-3">
-                                    {{ $p->created_at->format('d M Y') }}
-                                </td>
-
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
+                <tbody>
+                    @foreach ($pendaftarans->where('status', 'diverifikasi') as $p)
+                        <tr
+                            class="border-b border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 transition">
+                            <td class="px-4 py-3">{{ $p->user->name }}</td>
+                            <td class="px-4 py-3">{{ $p->user->email }}</td>
+                            <td class="px-4 py-3">{{ $p->programStudi->nama_prodi ?? '-' }}</td>
+                            <td class="px-4 py-3">{{ $p->updated_at->format('d M Y') }}</td>
+                            <td class="px-4 py-3">
+                                <a href="{{ route('admin.pendaftaran.show', $p->id) }}"
+                                    class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200">
+                                    Detail
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
 
     </div>
 
 
-    {{-- SCRIPTS --}}
+    <!-- ========================== SCRIPTS ========================== -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        // CHART STATUS
+        /* -------------------- CHART STATUS -------------------- */
         new Chart(document.getElementById("chartStatus"), {
             type: "pie",
             data: {
@@ -131,7 +169,7 @@
             }
         });
 
-        // CHART MINGGUAN
+        /* -------------------- CHART MINGGUAN -------------------- */
         new Chart(document.getElementById("chartMinggu"), {
             type: "bar",
             data: {
