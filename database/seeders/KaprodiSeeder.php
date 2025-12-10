@@ -3,19 +3,19 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class KaprodiSeeder extends Seeder
 {
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'kaprodi@pendaftaran.com'], // supaya tidak duplicate
+            ['email' => 'kaprodi@gmail.com'],
             [
                 'name' => 'Kaprodi',
-                'password' => Hash::make('passwordkaprodi'),
                 'role' => 'kaprodi',
+                'password' => Hash::make('password'),
             ]
         );
     }

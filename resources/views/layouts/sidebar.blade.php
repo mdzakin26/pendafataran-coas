@@ -20,15 +20,16 @@ else document.documentElement.classList.remove('dark');" class="flex h-screen bg
         <!-- Navigation -->
         <nav class="flex-1 px-2 py-4 space-y-2">
             <!-- Dashboard -->
-            <a href="{{ route('dashboard') }}"
+            <a href="{{ Auth::user()->role === 'kaprodi' ? route('kaprodi.dashboard') : route('dashboard') }}"
                 class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all 
-                      hover:bg-blue-400 hover:text-white 
-                      {{ request()->routeIs('dashboard') ? 'bg-blue-400 text-white' : '' }}">
+          hover:bg-blue-400 hover:text-white 
+          {{ request()->routeIs('dashboard') || request()->routeIs('kaprodi.dashboard') ? 'bg-blue-400 text-white' : '' }}">
                 <div class="p-2 rounded-md bg-gray-200 dark:bg-gray-700">
                     <i class="bi bi-house"></i>
                 </div>
                 <span x-show="open">Beranda</span>
             </a>
+
 
             <!-- Menu Admin -->
             @if (Auth::user()->role === 'admin')
@@ -63,13 +64,16 @@ else document.documentElement.classList.remove('dark');" class="flex h-screen bg
                 </a>
                 <a href="{{ route('admin.laporan') }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all 
-          hover:bg-blue-400 hover:text-white 
-          {{ request()->routeIs('admin.laporan') ? 'bg-blue-400 text-white' : '' }}">
+                        hover:bg-blue-400 hover:text-white 
+                        {{ request()->routeIs('admin.laporan') ? 'bg-blue-400 text-white' : '' }}">
                     <div class="p-2 rounded-md bg-gray-200 dark:bg-gray-700">
                         <i class="bi bi-graph-up"></i>
                     </div>
                     <span x-show="open">Laporan</span>
                 </a>
+            @elseif (Auth::user()->role === 'kaprodi')
+                <!-- ================= MENU KAPRODI ================= -->
+                
             @else
                 <!-- ================= MENU MAHASISWA ================= -->
 

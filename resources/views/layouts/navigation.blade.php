@@ -76,23 +76,35 @@
 
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            @if (Auth::user()->role === 'admin')
-            {{-- Menu ini hanya akan tampil jika user adalah ADMIN --}}
-            <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('admin.pendaftaran.index')" :active="request()->routeIs('admin.pendaftaran.*')">
-                {{ __('Pendaftar') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('admin.program-studi.index')" :active="request()->routeIs('admin.program-studi.*')">
-                {{ __('Program Studi') }}
-            </x-responsive-nav-link>
-            @else
-            {{-- Menu ini hanya akan tampil jika user adalah MAHASISWA --}}
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-            @endif
+           @if (Auth::user()->role === 'admin')
+
+    {{-- MENU ADMIN --}}
+    <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+        {{ __('Dashboard Admin') }}
+    </x-nav-link>
+    <x-nav-link :href="route('admin.pendaftaran.index')" :active="request()->routeIs('admin.pendaftaran.*')">
+        {{ __('Pendaftar') }}
+    </x-nav-link>
+    <x-nav-link :href="route('admin.program-studi.index')" :active="request()->routeIs('admin.program-studi.*')">
+        {{ __('Program Studi') }}
+    </x-nav-link>
+
+@elseif (Auth::user()->role === 'kaprodi')
+
+    {{-- MENU KAPRODI --}}
+    <x-nav-link :href="route('kaprodi.dashboard')" :active="request()->routeIs('kaprodi.dashboard')">
+        {{ __('Dashboard Kaprodi') }}
+    </x-nav-link>
+
+@else
+
+    {{-- MENU MAHASISWA --}}
+    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+        {{ __('Dashboard') }}
+    </x-nav-link>
+
+@endif
+
         </div>
 
         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">

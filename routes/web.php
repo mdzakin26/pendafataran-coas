@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\StatusController;
 
+
 // Controller admin
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ProgramStudiController;
@@ -16,8 +17,10 @@ use App\Http\Controllers\Admin\PendaftaranExportController;
 use App\Http\Controllers\Admin\MatakuliahController;
 use App\Http\Controllers\Admin\JadwalMatakuliahController;
 use App\Http\Controllers\Admin\LaporanController;
-use maatwebsite\Excel\Facades\Excel;
 
+use maatwebsite\Excel\Facades\Excel;
+//controller kaprodi
+use App\Http\Controllers\Kaprodi\DashboardController as KaprodiDashboardController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -46,9 +49,15 @@ Route::get('/dokumen-pendaftaran/{namafile}', function ($namafile) {
 // Dashboard utama
 // ============================================================================
 Route::get('/dashboard', function () {
-    if (auth()->check() && auth()->user()->role === 'admin') {
-        return redirect()->route('admin.dashboard');
+    if (auth()->check()) {
+        if (auth()->user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+        if (auth()->user()->role === 'kaprodi') {
+            return redirect()->route('kaprodi.dashboard');
+        }
     }
+
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -110,7 +119,25 @@ Route::middleware(['auth', 'admin'])
         Route::resource('jadwal', JadwalMatakuliahController::class);
        
        
+       
     });
+
+    // ==========================================================================
+    // Grup route untuk KAPRODI
+    Route::middleware(['auth', 'kaprodi'])
+    ->prefix('kaprodi')
+    ->name('kaprodi.')
+    ->group(function () {
+
+        // Dashboard kaprodi
+        Route::get('/dashboard', [KaprodiDashboardController::class, 'index'])
+            ->name('dashboard');
+
+    });
+
+
+
+    
 
 // ============================================================================
 // Auth
